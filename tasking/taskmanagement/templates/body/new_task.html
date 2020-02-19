@@ -1,0 +1,13 @@
+{% extends "base_statdev.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block page_content_inner %}
+
+{% crispy form %}
+
+<script>
+$('.datetimeinput').datetimepicker({format: 'dd/mm/yyyy hh:ii'});
+</script>
+{% endblock %}
+
