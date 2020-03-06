@@ -7,6 +7,8 @@ from django.forms import Form, ModelForm, ChoiceField, FileField, CharField, Tex
 from django_countries.fields import CountryField
 from django_countries.data import COUNTRIES
 
+#from splitjson.widgets import SplitJSONWidget
+
 #crispy
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, HTML, Fieldset, MultiField, Div
@@ -29,6 +31,10 @@ class BaseFormHelper(FormHelper):
 
 class NewTaskForm(ModelForm):
 
+    task_owner = CharField(required=False, widget=Textarea(attrs={'style':'display:none',}), help_text='Task Owner',)
+    task_assignments = CharField(required=False, widget=Textarea(attrs={'style':'display:none',}), help_text='Task Assignment')
+    task_esculations = CharField(required=False, widget=Textarea(attrs={'style':'display:none',}), help_text='Task Esculations')
+
     class Meta:
         model = models.Task
         fields = ['task_title','task_description','task_type','status', 'deferred_to']
@@ -40,7 +46,7 @@ class NewTaskForm(ModelForm):
         self.helper = BaseFormHelper()
         self.fields['deferred_to'].widget.attrs['autocomplete'] = 'off'
         self.helper.add_input(Submit('Create Task', 'Create Task', css_class='btn-lg'))
-        owner_selection = HTML('{% include "body/task_owner_selection.html" %}')
-        self.helper.layout = Layout(owner_selection,'task_title','task_description','task_type','status', 'deferred_to')
+        owner_selection = HTML("<BR>")#HTML('{% include "body/task_owner_selection.html" %}')
+        self.helper.layout = Layout(owner_selection,'task_owner','task_title','task_description','task_type','status', 'deferred_to','task_assignments','task_esculations')
 
 

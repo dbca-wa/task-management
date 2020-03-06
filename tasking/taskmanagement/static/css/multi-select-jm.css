@@ -1,0 +1,41 @@
+.select-multiselectjm {
+    align-items: center;
+    ibackground: #f9f9f8;
+    background: #ffffff;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    box-sizing: border-box;
+    color: #363b3e;
+    cursor: pointer;
+    iidisplay: flex;
+    font-size: 16px;
+    font-weight: 500;
+    justify-content: left;
+    min-height: 44px;
+    padding: 5px 10px;
+    position: relative;
+    transition: 0.2s;
+    width: 100%;
+display: flex;
+    flex-wrap: wrap;
+     overflow-wrap: break-word;
+}
+.select-multiselectjm-selection {
+    background: #5e6264;
+    border-radius: 4px;
+    color: #fff;
+    cursor: initial;
+    display: inline-block;
+    margin: 5px 10px 5px 0;
+    padding: 3px 7px;
+}
+.search-multiselectjm-selection {
+   border:none; 
+   background: transparent; 
+   opacity:1.0;
+}
+.search-multiselectjm-selection:focus {
+    outline: none;
+}
+
