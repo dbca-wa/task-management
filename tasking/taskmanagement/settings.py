@@ -81,10 +81,10 @@ AUTHENTICATION_BACKENDS = (
     #'social_core.backends.email.EmailAuth',
     'django.contrib.auth.backends.ModelBackend',
 )
-#AUTH_USER_MODEL = 'accounts.EmailUser'
+AUTH_USER_MODEL = 'ledger_api.EmailUser'
 # for reference, django.conf.settings.X == backend.setting('X')
 # this one prevents the email auth backend from creating EmailUsers with a username param
-#USER_FIELDS = ['email']
+USER_FIELDS = ['email']
 #SOCIAL_AUTH_STRATEGY = 'social_django.strategy.DjangoStrategy'
 #SOCIAL_AUTH_STORAGE = 'social_django.models.DjangoStorage'
 #SOCIAL_AUTH_EMAIL_FORM_URL = '/ledger/'
@@ -358,6 +358,7 @@ INSTALLED_APPS += [
     'webtemplate_dbca',
 #    'django_q',
     'taskmanagement',
+    'ledger_api',
 #    'applications',
 #    'actions',
 #    'approvals',
@@ -406,7 +407,7 @@ MIDDLEWARE += [
 #                'django.template.context_processors.request',
 #                'django.contrib.auth.context_processors.auth',
 #                'django.contrib.messages.context_processors.messages',
-#                'statdev.context_processors.template_context',
+#             s   'statdev.context_processors.template_context',
 #            ],
 #        },
 #    },

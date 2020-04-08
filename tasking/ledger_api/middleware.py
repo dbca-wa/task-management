@@ -46,6 +46,6 @@ class SSOLoginMiddleware(MiddlewareMixin):
             else:
                 user = User()
             user.__dict__.update(attributemap)
-            user.save()
+            #user.save()
             user.backend = 'django.contrib.auth.backends.RemoteBackend'
             login(request, user)
