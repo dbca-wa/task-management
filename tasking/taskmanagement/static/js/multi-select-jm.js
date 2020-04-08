@@ -45,8 +45,16 @@ var mulitselectjm =  {
              }
              var json_data = JSON.parse(itemdata);
              console.log(json_data);
-             json_data.push(mulitselectjm.var.searchdata[item]);
-             $('#'+textarea_id).val(JSON.stringify(json_data));
+             var item_exists = false;
+             for (i = 0; i < json_data.length; i++) {
+                 if (mulitselectjm.var.searchdata[item]['id'] ==  json_data[i]['id']) {
+                   item_exists = true;
+                 }
+             }
+             if (item_exists == false) { 
+                json_data.push(mulitselectjm.var.searchdata[item]);
+                $('#'+textarea_id).val(JSON.stringify(json_data));
+             }
              // $('#chosen-multiselectjm').before('<span class="select-multiselectjm-selection" style="min-width: 100px;">'+mulitselectjm.var.searchdata[item]['title1']+'<b style="cursor: pointer;" >&nbsp;&nbsp;X</b></span>');
           
 
@@ -71,35 +79,50 @@ var mulitselectjm =  {
         },
         search: function(keyword, textarea_id) {
                 console.log('Key:'+keyword);
+                if (keyword.length < 1) {
+                      $('#dropdown-multiselectjm-holder-'+textarea_id).slideUp('slow');
+                } else {
                 $.ajax({
-                        type: "POST",
-                        url: "/static/data/multiselect-test.json",
+                        type: "GET",
+                        url: "/api/search-pg/",
                         data: "keyword="+keyword, 
                         dataType: "json",
                         success: function(data) {
                                var htmlresult = "";
-                               mulitselectjm.var.searchdata = data; 
-                               for (i = 0; i < data.length; i++) { 
-                                   console.log(data[i]['title1']);
+                               mulitselectjm.var.searchdata = data;
+                               if (data.length > 0) {
+                                   for (i = 0; i < data.length; i++) { 
+                                       console.log(data[i]['title1']);
 
-                                   htmlresult+= '<div style="width: 100%; border-bottom:1px solid #e8e8e8; margin-left:-1px; cursor: pointer;" onclick="mulitselectjm.selectItem('+i+','+"'"+textarea_id+"'"+');">';
-                                   htmlresult+= "<div style='width: 100%; padding-left: 5px;'>";
-                                   if(typeof  data[i]['title1'] != 'undefined'){
-                                       htmlresult+= "<div style='width: 100%; font-size:14px;'>"+data[i]['title1']+"</div>";
-                                   }
-                                   if(typeof  data[i]['title2'] != 'undefined') {
-                                       htmlresult+= "<div style='width: 100%; font-size:12px;'>"+data[i]['title2']+"</div>";
-                                   }
-                                   if(typeof  data[i]['title3'] != 'undefined') {
-                                       htmlresult+= "<div style='width: 100%; font-size:10px;'>"+data[i]['title3']+"</div>";
-                                   }
+                                       htmlresult+= '<div style="width: 100%; padding-top: 5px; min-height: 50px; border-bottom:1px solid #e8e8e8; margin-left:-1px; cursor: pointer;" onclick="mulitselectjm.selectItem('+i+','+"'"+textarea_id+"'"+');">';
+                                       htmlresult+= "<div style='width: 100%; padding-left: 8px;'>";
 
-                                   htmlresult+= "</div>";
 
-                                   htmlresult+= "</div>";
-                                   //if(typeof theObject['key'] != 'undefined'){
-                                   //  
-                                   //}
+                                       if(typeof  data[i]['title1'] != 'undefined'){
+                                           icon = ''
+                                           if (typeof  data[i]['icon'] != 'undefined') {
+                                                icon = '<img src="'+data[i]['icon']+'" style="margin-top: -4px; filter: invert(1);">';
+                                           }
+
+                                           htmlresult+= "<div style='width: 100%; font-size:14px;'>"+icon+'&nbsp;'+data[i]['title1']+"</div>";
+                                       }
+                                       if(typeof  data[i]['title2'] != 'undefined') {
+                                           htmlresult+= "<div style='width: 100%; font-size:12px;'>"+data[i]['title2']+"</div>";
+                                       }
+                                       if(typeof  data[i]['title3'] != 'undefined') {
+                                           htmlresult+= "<div style='width: 100%; font-size:10px;'>"+data[i]['title3']+"</div>";
+                                       }
+
+                                       htmlresult+= "</div>";
+
+                                       htmlresult+= "</div>";
+                                       //if(typeof theObject['key'] != 'undefined'){
+                                       //  
+                                       //}
+                                   }
+                               }   else {
+                                       htmlresult+= '<div>No results found.</div>';
+
                                }
                             // $("form#updatejob").hide(function(){$("div.success").fadeIn();}); 
                                $('#dropdown-multiselectjm-'+textarea_id).html("<div style='width: 100%'>"+htmlresult+"</div>");
@@ -109,7 +132,8 @@ var mulitselectjm =  {
                         error: function(XMLHttpRequest, textStatus, errorThrown) { 
                             // alert("Status: " + textStatus); alert("Error: " + errorThrown); 
                         }       
-            });
+                });
+             }
 
 
 	}

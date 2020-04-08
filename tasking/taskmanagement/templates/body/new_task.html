@@ -3,7 +3,8 @@
 {% load static %}
 
 {% block page_content_inner %}
-
+<div class="col-xs-12 col-md-10 col-lg-7">
+<div class="container-fluid">
 {% crispy form %}
 
 <script>
@@ -13,5 +14,7 @@ mulitselectjm.init('id_task_assignments');
 mulitselectjm.init('id_task_esculations');
 
 </script>
+</div>
+</div>
 {% endblock %}
 

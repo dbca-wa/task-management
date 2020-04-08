@@ -1,0 +1,48 @@
+{% extends "base_statdev.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block page_content_inner %}
+
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-12 col-md-8 col-lg-8">
+                <div class="col-lg-12">
+                    <h1>Welcome to the Swan Canning Riverpark online application system dashboard.</h1>
+                </div>
+                <div class="col-lg-12">
+                    <p>Here you can access your existing approvals, view any applications in progress, lodge new applications or submit information required to clear conditions of your approvals.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-12 col-md-8 col-lg-8">
+                <div class="col-lg-12">
+                    <h1>{{ object.task_title }}</h1>
+                </div>
+                <div class="col-lg-12">
+                      <div class="col-sm-12 col-md-12 col-lg-3">
+                             <div class="col-lg-12">
+                               <label>Task Owner</label>
+                             </div>
+                             <div class="col-lg-12">
+                               Task Owner
+                             </div>
+                      </div>
+                    <p>Here you can access your existing approvals, view any applications in progress, lodge new applications or submit information required to clear conditions of your approvals.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+

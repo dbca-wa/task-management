@@ -6,40 +6,41 @@
 <div class="col-sm-12">
 <h1>Task Management</h1>
 
-      <table id="application-table" class="table table-striped table-bordered table-condensed dataTable no-footer" role="grid" aria-describedby="application-table_info">
-           <thead>
+<table class="table table-bordered table-stripedii">
+  <thead class="thead-dark">
                    <tr role="row">
-                       <th>Task ID.</th>
-                       <th>Title</th>
-                       <th>Description</th>
-                       <th>System Reference Number</th>
-                       <th>System</th>
-                       <th>Assigned To</th>
-                       <th>Deferred To</th>
-                       <th>Created</th>
+                       <th scope="col">Task ID.</th>
+                       <th scope="col">Title</th>
+                       <th scope="col">Description</th>
+                       <th scope="col" title='System Reference Number (SRN)'>SRN</th>
+                       <th scope="col">System</th>
+                       <th scope="col">Assigned To</th>
+                       <th scope="col">Deferred To</th>
+                       <th scope="col">Created</th>
 
                        <th>Action</th>
                     </tr>
             </thead>
             <tbody>
 
-{% for t in tasks %}
-<tr >
+               {% for t in tasks %}
+               <tr >
+               
+                    <td><a href="{% url "view_task" t.id %}">TA-{{ t.id }}</a></td>
+                    <td>{{ t.task_title }}</td>
+                    <td>{{ t.task_description }}</td>
+                    <td>{{ t.system_reference_number }}</td>
+                    <td>{{ t.system }}</td>
+                    <td>{{ t.assigned_to }}</td>
+                    <td>{{ t.deferred_to }}</td>
+                    <td>{{ t.created }}</td>
+                    <td align='center'><a class="btn btn-primary " role="button" href="{% url "view_task" t.id %}">View</a></td>
+               </tr>
+               {% endfor %}
 
-     <td><a href="">TA-{{ t.id }}</a></td>
-     <td>{{ t.task_title }}</td>
-     <td>{{ t.task_description }}</td>
-     <td>{{ t.system_reference_number }}</td>
-     <td>{{ t.system }}</td>
-     <td>{{ t.assigned_to }}</td>
-     <td>{{ t.deferred_to }}</td>
-     <td>{{ t.created }}</td>
-     <td align='center'><a class="btn btn-primary " role="button" href="">View</a></td>
-{% endfor %}
-
-</tr>
-     </tbody>
+          </tbody>
 </table>
+</div>
 
 
 
@@ -65,7 +66,7 @@
                 <div class="panel-body " style='background-color: #f7fcff'>
                     <div class="col-sm-12 col-md-12 col-lg-12">
                         <h2>Swan Canning Riverpark application system</h2>
-                        <form method="post" action="{% url "social:complete" backend="email" %}">
+                        <form method="post" action="url "social:complete" backend="email" ">
                             <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token_value }}" />
                             <div class="form-group required-form-field"><label class="control-label" for="id_email">Email</label><input class="form-control" id="id_email" maxlength="254" name="email" title="" type="email" required=""></div>
 
@@ -92,6 +93,7 @@
         </div>
         <div>
         </div>
-{% endif %}
+</div></div>
 
+{% endif %}
 {% endblock %}
