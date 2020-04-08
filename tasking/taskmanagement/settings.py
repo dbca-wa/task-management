@@ -69,6 +69,7 @@ MIDDLEWARE = [
 #    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'ledger_api.middleware.SSOLoginMiddleware',
 #    'dpaw_utils.middleware.SSOLoginMiddleware',
 #    'dpaw_utils.middleware.AuditMiddleware',  # Sets model creator/modifier field values.
 #    'ledger.basket.middleware.BasketMiddleware',
@@ -84,7 +85,7 @@ AUTHENTICATION_BACKENDS = (
 #AUTH_USER_MODEL = 'accounts.EmailUser'
 # for reference, django.conf.settings.X == backend.setting('X')
 # this one prevents the email auth backend from creating EmailUsers with a username param
-#USER_FIELDS = ['email']
+USER_FIELDS = ['email']
 #SOCIAL_AUTH_STRATEGY = 'social_django.strategy.DjangoStrategy'
 #SOCIAL_AUTH_STORAGE = 'social_django.models.DjangoStorage'
 #SOCIAL_AUTH_EMAIL_FORM_URL = '/ledger/'
