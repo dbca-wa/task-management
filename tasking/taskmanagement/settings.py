@@ -69,6 +69,7 @@ MIDDLEWARE = [
 #    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'ledger_api.middleware.SSOLoginMiddleware',
 #    'dpaw_utils.middleware.SSOLoginMiddleware',
 #    'dpaw_utils.middleware.AuditMiddleware',  # Sets model creator/modifier field values.
 #    'ledger.basket.middleware.BasketMiddleware',
@@ -354,7 +355,7 @@ GIT_COMMIT_DATE = os.popen('git log -1 --format=%cd').read()
 INSTALLED_APPS += [
 ###    'reversion',
     'crispy_forms',
-    'bootstrap4',
+#    'bootstrap4',
     'webtemplate_dbca',
 #    'django_q',
     'taskmanagement',
@@ -390,7 +391,7 @@ MIDDLEWARE += [
 #    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 #    'reversion.middleware.RevisionMiddleware',
 #    'dpaw_utils.middleware.SSOLoginMiddleware',
-     'social_django.middleware.SocialAuthExceptionMiddleware'
+#     'social_django.middleware.SocialAuthExceptionMiddleware'
 ]
 
 #TEMPLATES += [
