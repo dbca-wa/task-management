@@ -6,13 +6,13 @@ import zlib
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 from django.contrib.postgres.fields import JSONField
 from django.db import models, IntegrityError, transaction
-from django.utils.encoding import python_2_unicode_compatible
+#from django.utils.encoding import python_2_unicode_compatible
 from django.utils import timezone
 from django.dispatch import receiver
 from django.db.models import Q
 from django.db.models.signals import post_delete, pre_save, post_save
 from django.core.exceptions import ValidationError
-
+from django.utils.crypto import get_random_string
 from django_countries.fields import CountryField
 
 from datetime import datetime, date
@@ -74,6 +74,7 @@ class EmailUser(AbstractBaseUser, PermissionsMixin):
     )
     title = models.CharField(max_length=100, choices=TITLE_CHOICES, null=True, blank=True,
                              verbose_name='title', help_text='')
+    ledger_groups = JSONField(default=dict)
     ledger_data = JSONField(default=dict)
 
     objects = EmailUserManager()
@@ -91,4 +92,16 @@ class EmailUser(AbstractBaseUser, PermissionsMixin):
         #.encode('utf-8').strip()
         return full_name
 
+
+
+class DataStore(models.Model):
+    key_name = models.CharField(max_length=100)
+    data = JSONField(default=dict) 
+
+    def __str__(self):
+        return self.key_name
+
+    class Meta:
+        verbose_name = 'Data Store'
+        verbose_name_plural = 'Data Stores'
 

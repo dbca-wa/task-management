@@ -15,6 +15,8 @@ else:
    BASE_DIR = BASE_DIR_ENV
 PROJECT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'ledger')
 
+LEDGER_API_KEY=env('LEDGER_API_KEY',"NO_KEY_PROVIDED")
+LEDGERGW_URL=env('LEDGERGW_URL','http://localhost/')
 # Application definitions
 SECRET_KEY = env('SECRET_KEY')
 DEBUG = env('DEBUG', False)
@@ -37,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.flatpages',
 #    'social_django',
     'django_extensions',
-    'reversion',
+#    'reversion',
     'widget_tweaks',
     'django_countries',
     'django_cron',
@@ -140,7 +142,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-
             ],
         },
     },
@@ -421,8 +422,8 @@ TEMPLATES[0]['DIRS'].append(os.path.join(BASE_DIR, 'taskmanagement', 'templates'
 #TEMPLATES[0]['DIRS'].append(os.path.join(BASE_DIR, 'applications', 'templates', 'applications'))
 
 TEMPLATES[0]['OPTIONS']['context_processors'].append('taskmanagement.context_processors.template_context')
-
 WSGI_APPLICATION = 'taskmanagement.wsgi.application'
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 #LOGIN_URL = 'login'
 

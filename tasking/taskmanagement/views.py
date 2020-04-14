@@ -7,6 +7,7 @@ from django.template import RequestContext
 from django.middleware.csrf import get_token
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
+from django.contrib import messages
 
 # Other
 from taskmanagement import models 
@@ -28,9 +29,10 @@ class HomePage(TemplateView):
         #       return HttpResponseRedirect(reverse('first_login_info_steps', args=(self.request.user.id,1)))
         template = get_template(self.template_name)
         #context = RequestContext(self.request)
-      
+
         context['csrf_token_value'] = get_token(self.request)
         context['tasks'] = models.Task.objects.all()
+        context['messages'] = messages.get_messages(self.request)
         print ("WHAT ")
         print (context)
         print("NO")
@@ -44,7 +46,6 @@ class HomePage(TemplateView):
            context['staff'] = self.request.user.is_staff
         else:
            context['staff'] = False
-
         #context = template_context(self.request)
         return context
 

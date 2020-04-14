@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
 from django.urls import reverse
-from django.utils.encoding import python_2_unicode_compatible
+#from django.utils.encoding import python_2_unicode_compatible
 from model_utils import Choices
 from django.contrib.auth.models import Group
 from django.core.files.storage import FileSystemStorage
@@ -19,14 +19,14 @@ ASSIGNMENT_GROUP = (
    (2, 'groups'),
 )
 
-@python_2_unicode_compatible
+#@python_2_unicode_compatible
 class System(models.Model):
     system_id = models.CharField(max_length=10)
     system_name = models.CharField(max_length=256)
     api_key = models.CharField(max_length=256) 
     enabled = models.BooleanField(default=True) 
 
-@python_2_unicode_compatible
+#@python_2_unicode_compatible
 class Task(models.Model):
     TASK_TYPE = (
           (0,'Task'),
@@ -57,7 +57,7 @@ class Task(models.Model):
 #@python_2_unicode_compatible
 #class TaskAttachment(models.Model):
 
-@python_2_unicode_compatible
+#@python_2_unicode_compatible
 class TaskGroup(models.Model):
     group_name = models.CharField(max_length=256)
     created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
@@ -66,33 +66,33 @@ class TaskGroup(models.Model):
         return self.group_name
 
 
-@python_2_unicode_compatible
+#@python_2_unicode_compatible
 class TaskGroupAccess(models.Model):
     task_group = models.ForeignKey(TaskGroup, blank=False, null=False, on_delete=models.CASCADE)
     user_id = models.IntegerField(blank=True, null=True) 
     created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
-@python_2_unicode_compatible
+#@python_2_unicode_compatible
 class TaskOwner(models.Model):
     task = models.ForeignKey(Task, blank=False, null=False, on_delete=models.CASCADE) 
     assignment_group = models.IntegerField(choices=ASSIGNMENT_GROUP,default=-1)
     assignment_value = models.IntegerField(blank=False, null=False)
     created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
-@python_2_unicode_compatible
+#@python_2_unicode_compatible
 class TaskAssignment(models.Model):
     task = models.ForeignKey(Task, blank=False, null=False, on_delete=models.CASCADE)
     assignment_group = models.IntegerField(choices=ASSIGNMENT_GROUP,default=-1)
     assignment_value = models.IntegerField(blank=False, null=False)
     created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
-@python_2_unicode_compatible
+#@python_2_unicode_compatible
 class TaskEscalation(models.Model):
     task = models.ForeignKey(Task, blank=False, null=False, on_delete=models.CASCADE)
     esculation_dt = models.DateTimeField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
-@python_2_unicode_compatible
+#@python_2_unicode_compatible
 class TaskEscalationAssignment(models.Model):
     task = models.ForeignKey(Task, blank=False, null=False, on_delete=models.CASCADE)
     esculation = models.ForeignKey(TaskEscalation, blank=False, null=False, on_delete=models.CASCADE,)
@@ -100,7 +100,7 @@ class TaskEscalationAssignment(models.Model):
     assignment_value = models.IntegerField(blank=False, null=False)
     created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
-@python_2_unicode_compatible
+#@python_2_unicode_compatible
 class TaskLog(models.Model):
 
     LOG_ACTION = (

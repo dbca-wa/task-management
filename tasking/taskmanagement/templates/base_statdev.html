@@ -1,5 +1,5 @@
 {% extends "webtemplate_dbca/base_internet.html" %}
-{% load static from staticfiles %}
+{% load static from static %}
 {% block base_style %}
 
 {% endblock %}
@@ -115,8 +115,8 @@
 {% block page_content %}
 <!-- Messages  -->
 {% if messages %}
-<div class="row">
-    <div class="col-xs-12">
+<div class="row" style='padding: 12px;'>
+    <div class="col-xs-12 col-md-12 col-lg-12">
         {% for message in messages %}
 	{% if message.tags == 'error' %}
 		<div class="alert alert-danger">

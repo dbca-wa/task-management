@@ -13,3 +13,8 @@ class EmailAdmin(ModelAdmin):
     list_filter = ('is_staff','is_superuser',)
     search_fields = ('first_name','last_name','id','ledger_id')
 
+@admin.register(models.DataStore)
+class DataStoreAdmin(ModelAdmin):
+     list_display = ('id','key_name')
+
+
