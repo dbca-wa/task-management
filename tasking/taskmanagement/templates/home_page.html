@@ -1,50 +1,15 @@
-{% extends "base_statdev.html" %}
+{% extends "base.html" %}
 {% block page_content_inner %}
 
 
 {% if request.user.is_authenticated %}
+{% include "body/task_groups.html" %}
 
-<div class="col-sm-12">
-<h1>Task Management</h1>
+<div class="col-sm-12 mt-3">
+<h2>My Task</h2>
+{% include "body/my_task_table.html" %}
 
-<table class="table table-bordered table-stripedii">
-  <thead class="thead-dark">
-                   <tr role="row">
-                       <th scope="col">Task ID.</th>
-                       <th scope="col">Title</th>
-                       <th scope="col">Description</th>
-                       <th scope="col" title='System Reference Number (SRN)'>SRN</th>
-                       <th scope="col">System</th>
-                       <th scope="col">Assigned To</th>
-                       <th scope="col">Deferred To</th>
-                       <th scope="col">Created</th>
-
-                       <th>Action</th>
-                    </tr>
-            </thead>
-            <tbody>
-
-               {% for t in tasks %}
-               <tr >
-               
-                    <td><a href="{% url "view_task" t.id %}">TA-{{ t.id }}</a></td>
-                    <td>{{ t.task_title }}</td>
-                    <td>{{ t.task_description }}</td>
-                    <td>{{ t.system_reference_number }}</td>
-                    <td>{{ t.system }}</td>
-                    <td>{{ t.assigned_to }}</td>
-                    <td>{{ t.deferred_to }}</td>
-                    <td>{{ t.created }}</td>
-                    <td align='center'><a class="btn btn-primary " role="button" href="{% url "view_task" t.id %}">View</a></td>
-               </tr>
-               {% endfor %}
-
-          </tbody>
-</table>
-</div>
-
-
-
+{% include "body/task_pagination.html"  %}
 
 <!-- number -->
 
@@ -94,7 +59,7 @@
         </div>
         <div>
         </div>
-</div></div>
+</div>
 
 {% endif %}
 {% endblock %}

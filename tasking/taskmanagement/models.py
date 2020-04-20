@@ -16,7 +16,7 @@ from django.core.exceptions import ValidationError
 ASSIGNMENT_GROUP = (
    (0, 'taskgroup'),
    (1, 'emailuser'),
-   (2, 'groups'),
+   (2, 'ledgergroup'),
 )
 
 #@python_2_unicode_compatible
@@ -53,6 +53,15 @@ class Task(models.Model):
 
     def __str__(self):
         return '{}'.format(self.task_title)
+
+
+class GroupCounter(models.Model):
+    group_type = models.IntegerField(blank=True, null=True) 
+    group_id = models.IntegerField(blank=True, null=True)
+    total = models.IntegerField(blank=True, null=True)
+
+    def __str__(self):
+        return '{}'.format(str(self.total))
 
 #@python_2_unicode_compatible
 #class TaskAttachment(models.Model):

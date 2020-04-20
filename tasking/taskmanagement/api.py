@@ -4,6 +4,8 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import Group
 from django.db.models import Q
 from taskmanagement import models
+from ledger_api import models as ledger_api_models
+
 #from ledger.accounts.models import EmailUser
 
 
@@ -27,9 +29,11 @@ def search_pg(request, *args, **kwargs):
 
     for se_wo in query_str_split:
          search_filter |= Q(first_name__icontains=se_wo) | Q(last_name__icontains=se_wo)
+
+
     #print (search_filter)
-    #for p in EmailUser.objects.filter(search_filter)[:10]:
-    #     data_list.append({'icon': '/static/images/person_icon_wh.png', 'email': p.email, 'title1': p.first_name +' '+p.last_name, 'title2': p.email, 'title3': '', 'id': str(p.id)+':emailuser'})
+    for p in ledger_api_models.EmailUser.objects.filter(search_filter)[:10]:
+         data_list.append({'icon': '/static/images/person_icon_wh.png', 'email': p.email, 'title1': p.first_name +' '+p.last_name, 'title2': p.email, 'title3': '', 'id': str(p.ledger_id)+':emailuser'})
 
 #    "icon": "/static/images/person_icon_wh.png",
 #    "title1": "Jason Moore 1",
@@ -38,6 +42,16 @@ def search_pg(request, *args, **kwargs):
 #    "id": "1:group"
 #     
 #  },
+    
+    ledger_groups = []
+    if ledger_api_models.DataStore.objects.filter(key_name='ledger_groups').count() > 0:
+         ds = ledger_api_models.DataStore.objects.filter(key_name='ledger_groups')[0]
+         ledger_groups = ds.data
+         for lg in ledger_groups['groups_list']:
+             if keyword.lower() in lg['group_name'].lower():
+                 data_list.append({'icon': '/static/images/group_person_icon_wh.png', 'title1': lg['group_name'], 'title2': '', 'title3': '', 'id': str(lg['group_id'])+':ledgergroup'})
+    #print (ledger_groups['groups_list'])
+
 
     for g in Group.objects.filter(name__icontains=keyword)[:10]:
          data_list.append({'icon': '/static/images/group_person_icon_wh.png', 'title1': g.name, 'title2': '', 'title3': '', 'id': str(g.id)+':group'})

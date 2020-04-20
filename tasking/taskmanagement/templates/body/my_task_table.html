@@ -1,0 +1,33 @@
+<table class="table table-bordered table-stripedii">
+           <thead class="thead-dark">
+                   <tr role="row">
+                       <th scope="col">Task ID.</th>
+                       <th scope="col">Title</th>
+                       <th scope="col" title='System Reference Number (SRN)'>SRN</th>
+                       <th scope="col">System</th>
+                       <th scope="col">Assigned To</th>
+                       <th scope="col">Deferred To</th>
+                       <th scope="col">Created</th>
+
+                       <th>Action</th>
+                    </tr>
+            </thead>
+            <tbody>
+
+               {% for t in tasks %}
+               <tr >
+
+                    <td><a href="{% url "view_task" t.id %}">TA-{{ t.id }}</a></td>
+                    <td>{{ t.task_title }}</td>
+                    <td>{{ t.system_reference_number }}</td>
+                    <td>{{ t.system }}</td>
+                    <td>{{ t.assigned_to }}</td>
+                    <td>{{ t.deferred_to }}</td>
+                    <td>{{ t.created }}</td>
+                    <td align='center'><a class="btn btn-primary " role="button" href="{% url "view_task" t.id %}">View</a></td>
+               </tr>
+               {% endfor %}
+
+          </tbody>
+</table>
+

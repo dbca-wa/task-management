@@ -4,6 +4,7 @@ from django.contrib.auth import login, logout, get_user_model
 from django.db.models import signals
 from django.utils.deprecation import MiddlewareMixin
 import urllib.request, json
+import urllib.parse
 from django.contrib import messages
 
 class SSOLoginMiddleware(MiddlewareMixin):
@@ -50,7 +51,9 @@ class SSOLoginMiddleware(MiddlewareMixin):
 
             # connect to ledger and align local cache account
             json_response = {}
-            with urllib.request.urlopen(settings.LEDGERGW_URL+"ledgergw/remote/user/jason.moore@dbca.wa.gov.au/"+settings.LEDGER_API_KEY+"/") as url:
+            data = urllib.parse.urlencode(attributemap)
+            data = data.encode('utf-8')
+            with urllib.request.urlopen(settings.LEDGERGW_URL+"ledgergw/remote/user/"+attributemap['email']+"/"+settings.LEDGER_API_KEY+"/", data) as url:
                    json_response = json.loads(url.read().decode())
 
             if 'user' in json_response:
@@ -62,7 +65,6 @@ class SSOLoginMiddleware(MiddlewareMixin):
             else:
                 messages.error(request, 'Unable to Update User Information from Ledger')
             user.__dict__.update(attributemap)
-            #user.is_staff = True
             user.save()
             user.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request, user)

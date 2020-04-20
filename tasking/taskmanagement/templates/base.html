@@ -47,6 +47,9 @@
         <div class="col-8">
             <img class="pull-left hidden-xs" src="{% static 'images/dbca_white.png' %}" height='80'>
         </div>
+	<div class="col-4 text-right">
+            <img src="https://outlook.office365.com/owa/service.svc/s/GetPersonaPhoto?email=andrew.kemp@dbca.wa.gov.au&UA=0&size=HR96x96&sc=1586251795501" alt="..." class="border border-light rounded-circle mt-2" height="60">
+	</div>
     </div>
 </div>
 {% endblock masthead %}
@@ -64,8 +67,10 @@
 
     {% if staff == True %}
 		<li class="nav-item active"><a class="nav-link" href="{% url 'new_task' %}" title="New Task"><img src="{% static 'images/dot_small.png' %}" class="d-inline-block align-middle" alt=""> New Task</a></li>
-                <li class="nav-item "><a class="nav-link" href="" title="My Tasks"><img src="{% static 'images/dot_small.png' %}" class="d-inline-block align-middle" alt=""> My Tasks</a></li>
-                <li class="nav-item "><a class="nav-link" href="" title="Task Groups"><img src="{% static 'images/dot_small.png' %}" class="d-inline-block align-middle" alt=""> Task Groups</a></li>
+
+		<li class="nav-item "><a class="nav-link" href="{% url 'my_task_assignments' %}" title="My Task Assignments"><img src="{% static 'images/dot_small.png' %}" class="d-inline-block align-middle" alt=""> My Task Assignments</a></li>
+
+		<li class="nav-item "><a class="nav-link" href="{% url 'my_assigned_tasks' %}" title="My Assigned Tasks"><img src="{% static 'images/dot_small.png' %}" class="d-inline-block align-middle" alt=""> My Assigned Tasks</a></li>
                 <li class="nav-item "><a class="nav-link" href="" title="Task Groups"><img src="{% static 'images/dot_small.png' %}" class="d-inline-block align-middle" alt=""> Task Esculations</a></li>
 
     {% else %}
@@ -76,6 +81,7 @@
 
 
   </div>
+ 
 </nav>
 {% endblock top_navbar %}
 

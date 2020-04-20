@@ -46,6 +46,7 @@ class NewTaskForm(ModelForm):
         super(NewTaskForm, self).__init__(*args, **kwargs)
         self.helper = BaseFormHelper()
         self.fields['deferred_to'].widget.attrs['autocomplete'] = 'off'
+        self.fields['esculation_date_time'].widget.attrs['autocomplete'] = 'off'
         self.helper.add_input(Submit('Create Task', 'Create Task', css_class='btn-lg'))
         owner_selection = HTML("<BR>")#HTML('{% include "body/task_owner_selection.html" %}')
         self.helper.layout = Layout(owner_selection,'task_owner','task_title','task_description','task_type','status', 'deferred_to','task_assignments','task_esculations','esculation_date_time')
