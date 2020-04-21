@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group
 from django.conf import settings
 from datetime import timedelta
 from taskmanagement import models
-from ledger_api import models as ledgergw_models
+from ledger_api_client import models as ledgergw_models
 from taskmanagement import common
 import urllib.request, json
 
