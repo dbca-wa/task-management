@@ -4,7 +4,7 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import Group
 from django.db.models import Q
 from taskmanagement import models
-from ledger_api import models as ledger_api_models
+from ledger_api_client import models as ledger_api_models
 
 #from ledger.accounts.models import EmailUser
 
