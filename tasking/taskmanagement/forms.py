@@ -44,10 +44,15 @@ class NewTaskForm(ModelForm):
         # User must be passed in as a kwarg.
         #user = kwargs.pop('user')
         super(NewTaskForm, self).__init__(*args, **kwargs)
+        if kwargs['instance'] is not None:
+             task_button = 'Update Task'
+        else:
+             task_button = 'Create Task'
+
         self.helper = BaseFormHelper()
         self.fields['deferred_to'].widget.attrs['autocomplete'] = 'off'
         self.fields['esculation_date_time'].widget.attrs['autocomplete'] = 'off'
-        self.helper.add_input(Submit('Create Task', 'Create Task', css_class='btn-lg'))
+        self.helper.add_input(Submit(task_button, task_button, css_class='btn-lg'))
         owner_selection = HTML("<BR>")#HTML('{% include "body/task_owner_selection.html" %}')
         self.helper.layout = Layout(owner_selection,'task_owner','task_title','task_description','task_type','status', 'deferred_to','task_assignments','task_esculations','esculation_date_time')
 

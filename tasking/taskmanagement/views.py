@@ -68,6 +68,94 @@ class HomePage(TemplateView):
         #context = template_context(self.request)
         return context
 
+class EditTask(LoginRequiredMixin, UpdateView):
+    template_name = 'body/edit_task.html'
+    form_class = task_forms.NewTaskForm
+    model = models.Task
+
+
+    def get_context_data(self, **kwargs):
+        context = super(EditTask, self).get_context_data(**kwargs)
+        return context
+
+    def get_initial(self):
+        initial = super(EditTask, self).get_initial()
+        esculation_date_time = ''
+        if models.TaskEscalation.objects.filter(task__id=self.object.pk).count() > 0:
+            esculation_date_time = models.TaskEscalation.objects.filter(task__id=self.object.pk)[0].esculation_dt.strftime('%d/%m/%Y %H:%M')
+        initial['deferred_to'] = datetime.datetime.now().strftime('%d/%m/%Y %H:%M')
+        initial['esculation_date_time'] = esculation_date_time
+        initial['task_owner'] = json.dumps(common.task_owner_multiselect(self.object.pk))
+        initial['task_assignments'] = json.dumps(common.task_assignment_multiselect(self.object.pk))
+        initial['task_esculations'] = json.dumps(common.task_esculation_multiselect(self.object.pk))
+
+        # [{"icon":"/static/images/group_person_icon_wh.png","title1":"Approver","title2":"","title3":"","id":"1:ledgergroup"}]
+        return initial
+
+    def post(self, request, *args, **kwargs):
+        if request.POST.get('cancel'):
+            app = self.get_object().application_set.first()
+            return HttpResponseRedirect(app.get_absolute_url())
+        return super(EditTask, self).post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        forms_data = form.cleaned_data
+        self.object.save()
+
+        assignment_group=None
+        esculation_date_time=None
+        task_owners = []
+        task_assignments = []
+        task_esculations = []
+
+        if common.is_json(self.request.POST.get('task_owner',[])) is True:
+            task_owners = json.loads(self.request.POST.get('task_owner',[]))
+        if common.is_json(self.request.POST.get('task_assignments',[])) is True:
+            task_assignments = json.loads(self.request.POST.get('task_assignments',[]))
+        if common.is_json(self.request.POST.get('task_esculations',[])) is True:
+            task_esculations = json.loads(self.request.POST.get('task_esculations',[]))
+
+        esculation_dt = self.request.POST.get('esculation_date_time',None)
+        if esculation_dt is not None:
+             esculation_date_time = datetime.datetime.strptime(self.request.POST.get('esculation_date_time',None), '%d/%m/%Y %H:%M')
+        #esculation_date_time = self.request.POST.get('esculation_date_time',None)
+
+        models.TaskOwner.objects.filter(task=self.object).delete()
+        for to in task_owners:
+            to_id = to['id']
+            to_id_split =  to_id.split(":")
+            #if to_id_split[1] == 'emailuser':
+            assignment_group=common.person_group_type(to_id_split[1])
+            to_obj = models.TaskOwner.objects.create(task=self.object,assignment_group=assignment_group,assignment_value=int(to_id_split[0]))
+
+        models.TaskAssignment.objects.filter(task=self.object).delete()
+        for ta in task_assignments:
+            ta_id = ta['id']
+            ta_id_split =  ta_id.split(":")
+            #if ta_id_split[1] == 'emailuser':
+            assignment_group=common.person_group_type(ta_id_split[1])
+            ta_obj = models.TaskAssignment.objects.create(task=self.object,assignment_group=assignment_group,assignment_value=int(ta_id_split[0]))
+            common.updateTaskGroupCounter(int(ta_id_split[0]), assignment_group)
+
+        if models.TaskEscalation.objects.filter(task=self.object).count() == 1 :
+            te_obj = models.TaskEscalation.objects.get(task=self.object)
+            te_obj.esculation_dt = esculation_date_time
+            te_obj.save()
+        else:
+            models.TaskEscalation.objects.filter(task=self.object).delete()
+            te_obj = models.TaskEscalation.objects.create(task=self.object,esculation_dt=esculation_date_time)
+
+        models.TaskEscalationAssignment.objects.filter(task=self.object).delete()
+        for te in task_esculations:
+            te_id = te['id']
+            te_id_split =  te_id.split(":")
+            assignment_group=common.person_group_type(te_id_split[1])
+            ta_obj = models.TaskEscalationAssignment.objects.create(task=self.object,esculation=te_obj,assignment_group=assignment_group,assignment_value=int(te_id_split[0]))
+            
+
+        return HttpResponseRedirect(reverse('home_page',))
+
 
 class NewTask(LoginRequiredMixin, CreateView):
     # preperation to replace old homepage with screen designs..
@@ -108,20 +196,16 @@ class NewTask(LoginRequiredMixin, CreateView):
         return initial
 
     def post(self, request, *args, **kwargs):
-        print ("TASK POST")
         if request.POST.get('cancel'):
             app = self.get_object().application_set.first()
             return HttpResponseRedirect(app.get_absolute_url())
         return super(NewTask, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):
-        print ("TASK VALID")
         self.object = form.save(commit=False)
         forms_data = form.cleaned_data
         self.object.save()
-        print ("TASK_OWNER")
 
-#        print (forms_data['task_owner'])
         assignment_group=None
         esculation_date_time=None
         task_owners = []
@@ -138,38 +222,26 @@ class NewTask(LoginRequiredMixin, CreateView):
         esculation_dt = self.request.POST.get('esculation_date_time',None)
         if esculation_dt is not None:
              esculation_date_time = datetime.datetime.strptime(self.request.POST.get('esculation_date_time',None), '%d/%m/%Y %H:%M')
-        #esculation_date_time = self.request.POST.get('esculation_date_time',None)
-
-        print (task_owners)
         for to in task_owners:
             to_id = to['id']
             to_id_split =  to_id.split(":")
-            #if to_id_split[1] == 'emailuser':
             assignment_group=common.person_group_type(to_id_split[1])
             to_obj = models.TaskOwner.objects.create(task=self.object,assignment_group=assignment_group,assignment_value=int(to_id_split[0]))
 
         for ta in task_assignments:
             ta_id = ta['id']
             ta_id_split =  ta_id.split(":")
-            #if ta_id_split[1] == 'emailuser':
             assignment_group=common.person_group_type(ta_id_split[1])
             ta_obj = models.TaskAssignment.objects.create(task=self.object,assignment_group=assignment_group,assignment_value=int(ta_id_split[0]))
             common.updateTaskGroupCounter(int(ta_id_split[0]), assignment_group)
 
         te_obj = models.TaskEscalation.objects.create(task=self.object,esculation_dt=esculation_date_time)
+        for te in task_esculations:
+            te_id = te['id']
+            te_id_split =  te_id.split(":")
+            assignment_group=common.person_group_type(te_id_split[1])
+            ta_obj = models.TaskEscalationAssignment.objects.create(task=self.object,esculation=te_obj,assignment_group=assignment_group,assignment_value=int(te_id_split[0]))
 
-
-#        for ta in task_assignments:
-#            ta_id = ta['id']
-#            ta_id_split =  ta_id.split(":")
-#            if ta_id_split[1] == 'emailuser':
-#                 assignment_group=1
-#            ta_obj = models.TaskAssignment.objects.create(task=self.object,assignment_group=assignment_group,assignment_value=ta_id[0])
-#
-        print ("FORM DATA")
-        print (forms_data)
-        print ("POST")
-        print (self.request.POST)
         return HttpResponseRedirect(reverse('home_page',))
 #  (0, 'taskgroup'),
 #   (1, 'emailuser'),
@@ -409,7 +481,7 @@ class GroupTasks(LoginRequiredMixin, TemplateView):
              rowend = rowlimit + startrow
              context['rowend'] = rowend
              filter_query &= Q(task__deferred_to__lte=now)
-             results = models.TaskAssignment.objects.filter(filter_query).values('task__id','task__task_title','task__task_description','task__system_reference_number','task__system','task__task_type','task__status','task__assigned_to','task__deferred_to','task__created')
+             results = models.TaskAssignment.objects.filter(filter_query).values('task__id','task__task_title','task__task_description','task__system_reference_number','task__system','task__task_type','task__status','task__assigned_to','task__deferred_to','task__created')[startrow:rowend]
              context['task_total'] = models.TaskAssignment.objects.filter(filter_query).count()
              context = common.buildTaskTable(self.request, context, results,'TaskAssignment')
 

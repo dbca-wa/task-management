@@ -1,5 +1,7 @@
 from taskmanagement import models
 from django.db.models import Q, Min
+from ledger_api_client import models as ledger_api_models
+
 import datetime
 import json
 
@@ -132,8 +134,8 @@ def buildTaskTable(request, context, results, task_model_type):
         page = 1
         start = 0
         active = False
-        prevpage = {}
-        nextpage = {}
+        prevpage = {'start': 0, 'limit': 0, 'disabled': True}
+        nextpage = {'start': 0, 'limit': 0, 'disabled': True}
         prevdisabled = False
         nextdisabled = False
         while page <= numberofpages:
@@ -159,4 +161,91 @@ def buildTaskTable(request, context, results, task_model_type):
         context['prevpage'] = prevpage
         context['nextpage'] = nextpage
         return context
+
+
+
+def assignmentFriendlty(assignment_group,assignment_value):
+    print('assignmentFriendlty')
+    print (str(assignment_group) + " "+ str(assignment_value))
+    item = {}
+    if assignment_group == 0:
+        item = {'icon': '/static/images/group_person_icon_wh.png', 'title1': 'Unknown ('+str(assignment_value)+')', 'title2': '', 'title3': '', 'id': str(assignment_value)+':taskgroup'}
+        if models.TaskGroup.objects.filter(id=int(assignment_value)).count() > 0:
+              tg = models.TaskGroup.objects.filter(id=int(assignment_value))[0]
+              item = {'icon': '/static/images/group_person_icon_wh.png', 'title1': tg.group_name, 'title2': '', 'title3': '', 'id': str(assignment_value)+':taskgroup'}
+        # Task Group
+        pass
+    elif assignment_group == 1:
+        item = {'icon': '/static/images/group_person_icon_wh.png', 'title1': 'Unknown ('+str(assignment_value)+')', 'title2': '', 'title3': '', 'id': str(assignment_value)+':emailuser'}
+        if ledger_api_models.EmailUser.objects.filter(ledger_id=int(assignment_value)).count() > 0:
+              lm = ledger_api_models.EmailUser.objects.filter(ledger_id=int(assignment_value))[0]
+              item = {'icon': '/static/images/group_person_icon_wh.png', 'title1': lm.first_name+' '+lm.last_name, 'title2': '', 'title3': '', 'id': str(assignment_value)+':emailuser'}
+     
+        # Task Person (ledger)
+        pass
+    elif assignment_group == 2:
+        # Task Ledger Group (ledger)
+        item = {'icon': '/static/images/group_person_icon_wh.png', 'title1': 'Unknown ('+str(assignment_value)+')', 'title2': '', 'title3': '', 'id': str(assignment_value)+':ledgergroup'}
+        if ledger_api_models.DataStore.objects.filter(key_name='ledger_groups').count() > 0:
+             ds = ledger_api_models.DataStore.objects.filter(key_name='ledger_groups')[0]
+             ledger_groups = ds.data
+             for lg in ledger_groups['groups_list']:
+                 if int(assignment_value) == int(lg['group_id']):
+                     item = {'icon': '/static/images/group_person_icon_wh.png', 'title1': lg['group_name'], 'title2': '', 'title3': '', 'id': str(assignment_value)+':ledgergroup'}
+ 
+    return item
+
+def task_owner_multiselect(task_id):
+    item_array = []
+    task_owners = models.TaskOwner.objects.filter(task__id=task_id)
+    for to in task_owners:
+         item = assignmentFriendlty(to.assignment_group,to.assignment_value)
+         item_array.append(item)
+    return item_array
+
+
+
+
+def task_assignment_multiselect(task_id):
+    item_array = []
+    item_list = models.TaskAssignment.objects.filter(task__id=task_id)
+    for i in item_list:
+         item = assignmentFriendlty(i.assignment_group,i.assignment_value)
+         item_array.append(item)
+    return item_array
+
+def task_esculation_multiselect(task_id):
+    item_array = []
+    item_list = models.TaskEscalationAssignment.objects.filter(task__id=task_id)
+    for i in item_list:
+         item = assignmentFriendlty(i.assignment_group,i.assignment_value)
+         item_array.append(item)
+    return item_array
+
+##@python_2_unicode_compatible
+#class TaskEscalation(models.Model):
+#    task = models.ForeignKey(Task, blank=False, null=False, on_delete=models.CASCADE)
+#    esculation_dt = models.DateTimeField(null=True, blank=True)
+#    created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+#
+##@python_2_unicode_compatible
+#class TaskEscalationAssignment(models.Model):
+#    task = models.ForeignKey(Task, blank=False, null=False, on_delete=models.CASCADE)
+#    esculation = models.ForeignKey(TaskEscalation, blank=False, null=False, on_delete=models.CASCADE,)
+#    assignment_group = models.IntegerField(choices=ASSIGNMENT_GROUP,default=-1)
+#    assignment_value = models.IntegerField(blank=False, null=False)
+#    created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+#
+
+
+##ASSIGNMENT_GROUP = (
+#   (0, 'taskgroup'),
+#      (1, 'emailuser'),
+#         (2, 'ledgergroup'),
+#         )
+#
+
+
+
+
 
