@@ -1,6 +1,8 @@
 from taskmanagement import models
 from django.db.models import Q, Min
 from ledger_api_client import models as ledger_api_models
+from ledger_api_client import common as ledger_api_common
+
 
 import datetime
 import json
@@ -180,7 +182,11 @@ def assignmentFriendlty(assignment_group,assignment_value):
         if ledger_api_models.EmailUser.objects.filter(ledger_id=int(assignment_value)).count() > 0:
               lm = ledger_api_models.EmailUser.objects.filter(ledger_id=int(assignment_value))[0]
               item = {'icon': '/static/images/group_person_icon_wh.png', 'title1': lm.first_name+' '+lm.last_name, 'title2': '', 'title3': '', 'id': str(assignment_value)+':emailuser'}
-     
+        else:
+            results = ledger_api_common.get_ledger_user_info_by_id(str(assignment_value))
+            if results['status'] == 200:
+                item = {'icon': '/static/images/group_person_icon_wh.png', 'title1': results['user']['first_name']+' '+results['user']['last_name'], 'title2': results['user']['email'], 'title3': '', 'id': str(assignment_value)+':emailuser'}
+
         # Task Person (ledger)
         pass
     elif assignment_group == 2:
@@ -221,6 +227,8 @@ def task_esculation_multiselect(task_id):
          item = assignmentFriendlty(i.assignment_group,i.assignment_value)
          item_array.append(item)
     return item_array
+
+
 
 ##@python_2_unicode_compatible
 #class TaskEscalation(models.Model):
