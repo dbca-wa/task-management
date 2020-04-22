@@ -31,12 +31,10 @@ def search_pg(request, *args, **kwargs):
     for se_wo in query_str_split:
          search_filter |= Q(first_name__icontains=se_wo) | Q(last_name__icontains=se_wo)
 
-    print ("LEDGER SEARCH")
     lresults = ledger_api_common.search_ledger_users(keyword)
     if lresults['status'] == 200:
         for p in lresults['users']:
-            print (p)
-            data_list.append({'icon': '/static/images/person_icon_wh.png', 'email': p['email'], 'title1': p['first_name'] +' '+p['last_name'], 'title2': p['email'], 'title3': '', 'id': str(p['ledgerid'])+':emailuser'})
+            data_list.append({'icon': '/static/images/person_icon_wh.png', 'email': p['email'], 'title1': str(p['first_name'])+' '+str(p['last_name']), 'title2': p['email'], 'title3': '', 'id': str(p['ledgerid'])+':emailuser'})
 
     #print (search_filter)
 #    for p in ledger_api_models.EmailUser.objects.filter(search_filter)[:10]:
