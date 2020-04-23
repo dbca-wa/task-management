@@ -6,7 +6,7 @@ from django.db.models import Q
 from taskmanagement import models
 from ledger_api_client import models as ledger_api_models
 from ledger_api_client import common as ledger_api_common
-
+from taskmanagement import common
 #from ledger.accounts.models import EmailUser
 
 
@@ -34,7 +34,7 @@ def search_pg(request, *args, **kwargs):
     try:
         lresults = ledger_api_common.search_ledger_users(keyword) 
     except Exception as e:
-        ledger_api_common.common_log(str(e))
+        common.common_log(str(e))
 
     lresults = ledger_api_common.search_ledger_users(keyword)
     if lresults['status'] == 200:
