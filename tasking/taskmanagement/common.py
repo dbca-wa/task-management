@@ -255,5 +255,12 @@ def task_esculation_multiselect(task_id):
 
 
 
+def common_log(line):
+     dt = datetime.datetime.now()
+     f= open(settings.BASE_DIR+"/logs/common.log","a+")
+     f.write(str(dt.strftime('%Y-%m-%d %H:%M:%S'))+': '+line+"\r\n")
+     f.close()
+
+
 
 

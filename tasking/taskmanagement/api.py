@@ -30,6 +30,11 @@ def search_pg(request, *args, **kwargs):
 
     for se_wo in query_str_split:
          search_filter |= Q(first_name__icontains=se_wo) | Q(last_name__icontains=se_wo)
+    lresults = []
+    try:
+        lresults = ledger_api_common.search_ledger_users(keyword) 
+    except Exception as e:
+        ledger_api_common.common_log(str(e))
 
     lresults = ledger_api_common.search_ledger_users(keyword)
     if lresults['status'] == 200:
