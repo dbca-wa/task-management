@@ -7,6 +7,7 @@ from taskmanagement import models
 from ledger_api_client import models as ledger_api_models
 from ledger_api_client import common as ledger_api_common
 from taskmanagement import common
+import datetime
 #from ledger.accounts.models import EmailUser
 
 
@@ -69,7 +70,43 @@ def search_pg(request, *args, **kwargs):
  
     for g in models.TaskGroup.objects.filter(group_name__icontains=keyword)[:10]:
          data_list.append({'icon': '/static/images/task_group_wh.png', 'title1': g.group_name, 'title2': '', 'title3': '', 'id': str(g.id)+':taskgroup'})
-
  
     return HttpResponse(json.dumps(data_list), content_type='application/json')
+
+
+@csrf_exempt
+def create_task_comment(request, *args, **kwargs):
+    data_list = {'status': 404, 'response_data': {"message": "Not Found"}}
+    try:
+        task_comment = request.POST.get('task_comment','')
+        task_id = request.POST.get('task_id',None)
+        task_status = request.POST.get('task_status',None)
+        task_deferred_date = request.POST.get('task_deferred_date',None)
+        ledger_info = common.loggedin_ledger_userinfo(request)
+        task = models.Task.objects.get(id=int(task_id))
+        models.TaskComment.objects.create(task=task,task_comment=task_comment, created_by=(ledger_info['ledger_id']))
+        print ("STATUS")
+        print (task_deferred_date)
+        if task_status == 'close':
+            task.status = 0
+        if task_status == 'defer':
+            task.status = 1
+
+        task_deferred_date_cov =  datetime.datetime.strptime(str(task_deferred_date), '%d/%m/%Y %H:%M')
+        task.deferred_to = task_deferred_date_cov
+        task.save()
+        data_list['status'] = 200
+        data_list['response_data']['message'] = "Successfully Created"
+    except:
+        data_list['status'] = 500
+        data_list['response_data']['message'] = "Error Submitting data to Server."
+    return HttpResponse(json.dumps(data_list), content_type='application/json', status=data_list['status'])
+
+
+#class TaskComment(models.Model):
+#    task = models.ForeignKey(Task, blank=False, null=False, on_delete=models.CASCADE)
+#    task_comment = models.TextField(blank=True, null=True, default="")
+#    created_by = models.IntegerField(blank=True, null=True)
+#    created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
 

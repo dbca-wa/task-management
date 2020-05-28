@@ -36,12 +36,19 @@ class Task(models.Model):
           (0,'Closed'),
           (1,'Open')
     )
+    TASK_PRIORITY = (
+          (1, 'Low'), 
+          (2, 'Medium'),
+          (3, 'High'),
+          (4, 'Critical')
+    )
 
     task_title = models.CharField(max_length=256)
     task_description = models.TextField(blank=True, null=True, default="") 
     system_reference_number = models.CharField(max_length=256)
     system = models.ForeignKey(System, blank=True, null=True, on_delete=models.CASCADE,) 
     task_type = models.IntegerField(choices=TASK_TYPE,default=-1)
+    task_priority = models.IntegerField(choices=TASK_PRIORITY,default=1) 
     #owner_role =
     #assignment_role =
     #esculation =
@@ -49,10 +56,20 @@ class Task(models.Model):
     assigned_to = models.IntegerField(blank=True, null=True)
     deferred_to = models.DateTimeField(null=True, blank=True)
     extra_meta = JSONField(null=True, blank=True)
+    created_by = models.IntegerField(blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     def __str__(self):
         return '{}'.format(self.task_title)
+
+class TaskComment(models.Model):
+    task = models.ForeignKey(Task, blank=False, null=False, on_delete=models.CASCADE)
+    task_comment = models.TextField(blank=True, null=True, default="")
+    created_by = models.IntegerField(blank=True, null=True)
+    created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+    def __str__(self):
+        return '{}'.format(self.task_comment)
 
 
 class GroupCounter(models.Model):

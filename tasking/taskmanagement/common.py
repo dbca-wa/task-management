@@ -64,12 +64,6 @@ def build_groups(request):
                         list_groups.append({'group_name': i['task_group__group_name'],'group_type_id': 0,'group_type': 'ledgergroup', 'group_id': i['task_group__id'],'total': total })
 
          
-
-
-
-
-
-
     return list_groups
 
 
@@ -104,10 +98,19 @@ def buildTaskTable(request, context, results, task_model_type):
                     task['system_reference_number'] = t['task__system_reference_number']
                     task['system'] = t['task__system']
                     task['task_type'] = t['task__task_type']
+                    task['task_type_name'] = models.Task.TASK_TYPE[t['task__task_type']]
                     task['status'] = t['task__status']
+                    task['priority'] = t['task__task_priority']
                     task['assigned_to'] = t['task__assigned_to']
                     task['deferred_to'] = t['task__deferred_to']
                     task['created'] = t['task__created']
+                    if t['task__assigned_to'] is None:
+                          t['task__assigned_to'] = 0
+                    if t['task__assigned_to'] > 0:
+                        task['assigned_to_info'] = ledger_person_info(t['task__assigned_to'])
+                    else:
+                        task['assigned_to_info'] = None
+
                 elif task_model_type == 'Task':
                     task['id'] = t['id']
                     task['task_title'] = t['task_title']
@@ -116,10 +119,16 @@ def buildTaskTable(request, context, results, task_model_type):
                     task['system'] = t['system']
                     task['task_type'] = t['task_type']
                     task['status'] = t['status']
+                    task['priority'] = t['task_priority']
                     task['assigned_to'] = t['assigned_to']
                     task['deferred_to'] = t['deferred_to']
                     task['created'] = t['created']
-
+                    if t['assigned_to'] is None:
+                         t['assigned_to'] = 0
+                    if t['assigned_to'] > 0:
+                         task['assigned_to_info'] = ledger_person_info(t['assigned_to'])
+                    else:
+                         task['assigned_to_info'] = None
 
                 tasks_list.append(task)
         # Pagination Totals
@@ -165,6 +174,53 @@ def buildTaskTable(request, context, results, task_model_type):
         return context
 
 
+def loggedin_ledger_userinfo(request):
+    item = None
+    if request.user:
+        if request.user.ledger_id:
+            assignment_value = request.user.ledger_id
+
+            item = {'icon': '/static/images/group_person_icon_wh.png', 'title1': 'Unknown ('+str(assignment_value)+')', 'title2': '', 'title3': '', 'ledger_id': str(assignment_value)}
+            if ledger_api_models.EmailUser.objects.filter(ledger_id=int(assignment_value)).count() > 0:
+                  lm = ledger_api_models.EmailUser.objects.filter(ledger_id=int(assignment_value))[0]
+                  item = {'icon': '/static/images/group_person_icon_wh.png', 'title1': lm.first_name+' '+lm.last_name, 'title2': '', 'title3': '', 'ledger_id': str(assignment_value)}
+            else:
+                results = ledger_api_common.get_ledger_user_info_by_id(str(assignment_value))
+                if results['status'] == 200:
+                    item = {'icon': '/static/images/group_person_icon_wh.png', 'title1': results['user']['first_name']+' '+results['user']['last_name'], 'title2': results['user']['email'], 'title3': '', 'id': str(-1000)}
+    return item
+
+
+
+
+def loggedin_userinfo_dropdown(request):
+    item = None 
+    if request.user:
+        if request.user.ledger_id:
+            assignment_value = request.user.ledger_id
+
+            item = {'icon': '/static/images/group_person_icon_wh.png', 'title1': 'Unknown ('+str(assignment_value)+')', 'title2': '', 'title3': '', 'id': str(assignment_value)+':emailuser'}
+            if ledger_api_models.EmailUser.objects.filter(ledger_id=int(assignment_value)).count() > 0:
+                  lm = ledger_api_models.EmailUser.objects.filter(ledger_id=int(assignment_value))[0]
+                  item = {'icon': '/static/images/group_person_icon_wh.png', 'title1': lm.first_name+' '+lm.last_name, 'title2': '', 'title3': '', 'id': str(assignment_value)+':emailuser'}
+            else:
+                results = ledger_api_common.get_ledger_user_info_by_id(str(assignment_value))
+                if results['status'] == 200:
+                    item = {'icon': '/static/images/group_person_icon_wh.png', 'title1': results['user']['first_name']+' '+results['user']['last_name'], 'title2': results['user']['email'], 'title3': '', 'id': str(assignment_value)+':emailuser'}
+    return item
+    
+
+def ledger_person_info(assignment_value):
+    item = {}
+    if ledger_api_models.EmailUser.objects.filter(ledger_id=int(assignment_value)).count() > 0:
+          lm = ledger_api_models.EmailUser.objects.filter(ledger_id=int(assignment_value))[0]
+          item = {'first_name':lm.first_name,'last_name':lm.last_name,'full_name': lm.first_name+' '+lm.last_name, 'id': int(assignment_value), 'email': lm.email}
+    else:
+        results = ledger_api_common.get_ledger_user_info_by_id(str(assignment_value))
+        if results['status'] == 200:
+            item = {'first_name':results['user']['first_name'],'last_name':results['user']['last_name'],'full_name': results['user']['first_name']+' '+results['user']['last_name'], 'id': int(assignment_value), 'email': results['user']['email']}
+    return item
+
 
 def assignmentFriendlty(assignment_group,assignment_value):
     print('assignmentFriendlty')
@@ -208,9 +264,6 @@ def task_owner_multiselect(task_id):
          item = assignmentFriendlty(to.assignment_group,to.assignment_value)
          item_array.append(item)
     return item_array
-
-
-
 
 def task_assignment_multiselect(task_id):
     item_array = []

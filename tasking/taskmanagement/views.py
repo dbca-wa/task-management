@@ -44,7 +44,7 @@ class HomePage(TemplateView):
         context['rowlimit'] = rowlimit
         rowend = rowlimit + startrow
         context['rowend'] = rowend
-        results = models.Task.objects.all().values('id','task_title','task_description','system_reference_number','system','task_type','status','assigned_to','deferred_to','created')[startrow:rowend]
+        results = models.Task.objects.all().values('id','task_title','task_description','system_reference_number','system','task_type','task_priority','status','assigned_to','deferred_to','created')[startrow:rowend]
         context['task_total'] = models.Task.objects.all().count()
         context = common.buildTaskTable(self.request, context, results,'Task')
 
@@ -154,6 +154,59 @@ class EditTask(LoginRequiredMixin, UpdateView):
             ta_obj = models.TaskEscalationAssignment.objects.create(task=self.object,esculation=te_obj,assignment_group=assignment_group,assignment_value=int(te_id_split[0]))
             
 
+        return HttpResponseRedirect(reverse('home_page',))
+
+class AssignTask(LoginRequiredMixin, UpdateView):
+    template_name = 'body/assign_task.html'
+    form_class = task_forms.AssignTaskForm
+    model = models.Task
+
+
+    def get_context_data(self, **kwargs):
+        context = super(AssignTask, self).get_context_data(**kwargs)
+        return context
+
+    def get_initial(self):
+        initial = super(AssignTask, self).get_initial()
+        assigned_to_var = []
+        assigned_to_current_loggedin = common.loggedin_userinfo_dropdown(self.request)
+        if assigned_to_current_loggedin:
+             assigned_to_var.append(assigned_to_current_loggedin)
+        #print ("LEDGERID")
+        #print (initial['assigned_to'])
+        #print (self.request.user.ledger_id)
+        initial['assigned_to'] = json.dumps(assigned_to_var)
+        #esculation_date_time = ''
+        #if models.TaskEscalation.objects.filter(task__id=self.object.pk).count() > 0:
+        #    esculation_date_time = models.TaskEscalation.objects.filter(task__id=self.object.pk)[0].esculation_dt.strftime('%d/%m/%Y %H:%M')
+        #initial['deferred_to'] = datetime.datetime.now().strftime('%d/%m/%Y %H:%M')
+        #initial['esculation_date_time'] = esculation_date_time
+        #initial['task_owner'] = json.dumps(common.task_owner_multiselect(self.object.pk))
+        #initial['task_assignments'] = json.dumps(common.task_assignment_multiselect(self.object.pk))
+        #initial['task_esculations'] = json.dumps(common.task_esculation_multiselect(self.object.pk))
+
+        # [{"icon":"/static/images/group_person_icon_wh.png","title1":"Approver","title2":"","title3":"","id":"1:ledgergroup"}]
+        return initial
+
+    def post(self, request, *args, **kwargs):
+        if request.POST.get('cancel'):
+            app = self.get_object().application_set.first()
+            return HttpResponseRedirect(app.get_absolute_url())
+        return super(AssignTask, self).post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        print ("FORM VALID")
+        self.object = form.save(commit=False)
+        forms_data = form.cleaned_data
+        print ("ASSIGN TASK DATA")
+        print (forms_data)
+        assigned_to = json.loads(self.request.POST.get('assigned_to',[]))
+        if len(assigned_to) > 0:
+            if 'id' in assigned_to:
+                  at_split = assigned_to['id'].split(":")
+                  self.object.assigned_to = int(at_split[0])
+        print (self.request.POST.get('assigned_to',None))
+        self.object.save()
         return HttpResponseRedirect(reverse('home_page',))
 
 
@@ -284,6 +337,24 @@ class ViewTask(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(ViewTask, self).get_context_data(**kwargs)
+        task_id = self.kwargs['pk']
+        task = models.TaskComment.objects.get(id=int(task_id))
+        task_comments = models.TaskComment.objects.filter(task_id=task.id)
+        context['current_datetime'] = datetime.datetime.now()
+        context['task_comments'] = []
+        for tc in task_comments:
+            row = {}
+            row['id'] = tc.id
+            row['comment'] = tc.task_comment
+            row['created_by_id'] = tc.created_by
+            if tc.created_by:
+               ledger_info = common.assignmentFriendlty(1,int(tc.created_by))
+               row['created_by_name'] = ledger_info['title1']
+            else:
+               row['created_by_name'] = "Unknown"
+            row['created'] = tc.created
+            context['task_comments'].append(row) 
+        #context['']
 #        context['request'] = self.request
 #        context['user'] = self.request.user
 #        if self.request.user.is_staff is True:
@@ -343,7 +414,7 @@ class MyTaskAssignments(LoginRequiredMixin, TemplateView):
         context['rowlimit'] = rowlimit
         rowend = rowlimit + startrow 
         context['rowend'] = rowend
-        results = models.TaskAssignment.objects.filter(filter_query).values('task__id','task__task_title','task__task_description','task__system_reference_number','task__system','task__task_type','task__status','task__assigned_to','task__deferred_to','task__created')[startrow:rowend]
+        results = models.TaskAssignment.objects.filter(filter_query).values('task__id','task__task_title','task__task_description','task__system_reference_number','task__system','task__task_type','task__status','task__assigned_to','task__task_priority','task__deferred_to','task__created')[startrow:rowend]
         print (results.query)
         context['task_total'] = models.TaskAssignment.objects.filter(filter_query).count()
         context = common.buildTaskTable(self.request, context, results,'TaskAssignment')
@@ -400,7 +471,7 @@ class MyAssignedTasks(LoginRequiredMixin, TemplateView):
         context['rowlimit'] = rowlimit
         rowend = rowlimit + startrow 
         context['rowend'] = rowend
-        results = models.Task.objects.filter(filter_query).values('id','task_title','task_description','system_reference_number','system','task_type','status','assigned_to','deferred_to','created')[startrow:rowend]
+        results = models.Task.objects.filter(filter_query).values('id','task_title','task_description','system_reference_number','system','task_type','status','task_priority','assigned_to','deferred_to','created')[startrow:rowend]
         context['task_total'] = models.Task.objects.filter(filter_query).count()
         context = common.buildTaskTable(self.request, context, results,'Task')
 
@@ -481,7 +552,7 @@ class GroupTasks(LoginRequiredMixin, TemplateView):
              rowend = rowlimit + startrow
              context['rowend'] = rowend
              filter_query &= Q(task__deferred_to__lte=now)
-             results = models.TaskAssignment.objects.filter(filter_query).values('task__id','task__task_title','task__task_description','task__system_reference_number','task__system','task__task_type','task__status','task__assigned_to','task__deferred_to','task__created')[startrow:rowend]
+             results = models.TaskAssignment.objects.filter(filter_query).values('task__id','task__task_title','task__task_description','task__system_reference_number','task__system','task__task_type','task__status','task__task_priority','task__assigned_to','task__deferred_to','task__created')[startrow:rowend]
              context['task_total'] = models.TaskAssignment.objects.filter(filter_query).count()
              context = common.buildTaskTable(self.request, context, results,'TaskAssignment')
 

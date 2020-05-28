@@ -6,12 +6,14 @@
                </div>
                <div class="col-sm-12 col-md-6 col-lg-6 text-right">
                       <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-			      <a type="button" class="btn btn-outline-dark {% if prevpage.disabled == True %}disabled {% endif %}" href="{% if prevpage.disabled == True %}#{% else %}?start={{ prevpage.start }}&limit={{ prevpage.limit }}{% endif %}" aria-disabled="true">Prev</a>
+			      <a type="button" class="btn btn-secondary {% if prevpage.disabled == True %}disabled {% endif %}" href="{% if prevpage.disabled == True %}#{% else %}?start={{ prevpage.start }}&limit={{ prevpage.limit }}{% endif %}" aria-disabled="true">Prev</a>
 			{% for page in  pagination %}
-			<a type="button" class="btn btn-outline-dark {% if page.active == True %}active{% endif %}" href="{% if page.active == True %}#{% else %}?start={{ page.start }}&limit={{ page.limit }}{% endif %}">{{ page.page }}</a>
+			<a type="button" class="btn btn-secondary {% if page.active == True %}active{% endif %}" href="{% if page.active == True %}#{% else %}?start={{ page.start }}&limit={{ page.limit }}{% endif %}">{{ page.page }}</a>
 			{% endfor %}
-			<a type="button" class="btn btn-outline-dark {% if nextpage.disabled == True %}disabled {% endif %}" href="{% if nextpage.disabled == True %}#{% else %}?start={{ nextpage.start }}&limit={{ nextpage.limit }}{% endif %}" aria-disabled="true" >Next</a>
+			<a type="button" class="btn btn-secondary {% if nextpage.disabled == True %}disabled {% endif %}" href="{% if nextpage.disabled == True %}#{% else %}?start={{ nextpage.start }}&limit={{ nextpage.limit }}{% endif %}" aria-disabled="true" >Next</a>
                       </div>
                </div>
         </div>
+
+
 </div>

@@ -14,19 +14,16 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^login/$', login, name='login', kwargs={'template_name': 'login.html'}),
     url(r'^logout/$', logout, name='logout'),
-#    url(r'^', include('applications.urls')),
-#    url(r'^', include('approvals.urls')),
-#    url(r'^', include('public.urls')),
     url(r'^new-task/', views.NewTask.as_view(),  name='new_task'),
     url(r'^edit-task/(?P<pk>[0-9]+)/', views.EditTask.as_view(),  name='edit_task'),
+    url(r'^assign-task/(?P<pk>[0-9]+)/', views.AssignTask.as_view(),  name='assign_task'),
+    #url(r'^assign-task-bulk/', views.AssignTaskBulk.as_view(),  name='assign_task_bulk'),
     url(r'^my-task-assignments/', views.MyTaskAssignments.as_view(),  name='my_task_assignments'),
     url(r'^my-assigned-tasks/', views.MyAssignedTasks.as_view(),  name='my_assigned_tasks'),
     url(r'^task-group/(?P<group_type>[0-9]+)/(?P<pk>[0-9]+)/', views.GroupTasks.as_view(),  name='group_tasks'),
     url(r'^view-task/(?P<pk>[0-9]+)/$', views.ViewTask.as_view(),  name='view_task'),
     url(r'^api/search-pg/', api.search_pg, name='search_pg'),
-#    url(r'^ledger/', include('ledger.accounts.urls', namespace='accounts')),
-#    url(r'^ledger/', include('social_django.urls', namespace='social')),
-    #url(r'^', include('approvals.urls'))
+    url(r'^api/create_task_comment/', api.create_task_comment, name='create_task_comment')
 ]
 
 if settings.DEBUG:

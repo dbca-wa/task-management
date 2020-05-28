@@ -6,7 +6,8 @@ from django.contrib.auth.models import Group
 from django.forms import Form, ModelForm, ChoiceField, FileField, CharField, Textarea, ClearableFileInput, HiddenInput, Field, RadioSelect, ModelChoiceField, Select, DateTimeField
 from django_countries.fields import CountryField
 from django_countries.data import COUNTRIES
-
+from django import forms
+import json
 #from splitjson.widgets import SplitJSONWidget
 
 #crispy
@@ -38,7 +39,7 @@ class NewTaskForm(ModelForm):
 
     class Meta:
         model = models.Task
-        fields = ['task_title','task_description','task_type','status', 'deferred_to']
+        fields = ['task_title','task_description','task_type','task_priority','deferred_to']
 
     def __init__(self, *args, **kwargs):
         # User must be passed in as a kwarg.
@@ -54,6 +55,41 @@ class NewTaskForm(ModelForm):
         self.fields['esculation_date_time'].widget.attrs['autocomplete'] = 'off'
         self.helper.add_input(Submit(task_button, task_button, css_class='btn-lg'))
         owner_selection = HTML("<BR>")#HTML('{% include "body/task_owner_selection.html" %}')
-        self.helper.layout = Layout(owner_selection,'task_owner','task_title','task_description','task_type','status', 'deferred_to','task_assignments','task_esculations','esculation_date_time')
+        self.helper.layout = Layout(owner_selection,'task_owner','task_title','task_description','task_type','task_priority','deferred_to','task_assignments','task_esculations','esculation_date_time')
 
+
+
+class AssignTaskForm(ModelForm):
+
+    assigned_to = CharField(required=False, widget=HiddenInput(attrs={'iistyle':'display:none',}), help_text='Assign To',)
+
+    class Meta:
+        model = models.Task
+        fields = ['assigned_to',]
+
+    def __init__(self, *args, **kwargs):
+        # User must be passed in as a kwarg.
+        #user = kwargs.pop('user')
+        super(AssignTaskForm, self).__init__(*args, **kwargs)
+        task_button = 'Assign Task'
+        print (self.fields)
+        self.fields['assigned_to'].required = False
+#        self.fields['task_title'].required = False
+#        self.fields['task_description'].required = False
+
+        self.render_required_fields = False
+        self.helper = BaseFormHelper()
+        #self.fields['assigned_to'].widget.attrs['autocomplete'] = 'off'
+        self.helper.add_input(Submit(task_button, task_button, css_class='btn-lg'))
+        owner_selection = HTML("<BR>")#HTML('{% include "body/task_owner_selection.html" %}')
+        self.helper.layout = Layout(owner_selection,'assigned_to')
+
+    def clean_assigned_to(self):
+        print (self.cleaned_data['assigned_to'])
+        print (len(self.cleaned_data['assigned_to']))
+        json_assign_to = json.loads(self.cleaned_data['assigned_to']) 
+        if len(json_assign_to) > 0:
+            return True
+        raise forms.ValidationError('Please select a valid assignment.') 
+        return False
 

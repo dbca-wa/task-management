@@ -32,3 +32,72 @@ function close_popup() {
 
 }
 
+var common = {
+     linkify: function(what) {
+         str = what; out = ""; url = ""; i = 0;
+         do {
+             url = str.match(/((https?:\/\/)?([a-z\-]+\.)*[\-\w]+(\.[a-z]{2,4})+(\/[\w\_\-\?\=\&\.]*)*(?![a-z]))/i);
+             if(url!=null) {
+                 // get href value
+                 href = url[0];
+                 if(href.substr(0,7)!="http://") href = "http://"+href;
+     
+                 // where the match occured
+                 where = str.indexOf(url[0]);
+     
+                 // add it to the output
+                 out += str.substr(0,where);
+     
+                 // link it
+                 out += '<a href="'+href+'" target="_blank">'+url[0]+'</a>';
+     
+                 // prepare str for next round
+                 str = str.substr((where+url[0].length));
+             } else {
+                 out += str;
+                 str = "";
+             }
+         } while(str.length>0);
+         return out;
+     },
+     linkify_https: function(what) {
+         str = what; out = ""; url = ""; i = 0;
+         do {
+             url = str.match(/((https?:\/\/)?([a-z\-]+\.)*[\-\w]+(\.[a-z]{2,4})+(\/[\w\_\-\?\=\&\.]*)*(?![a-z]))/i);
+             if(url!=null) {
+                 // get href value
+                 href = url[0];
+                 if(href.substr(0,7)!="https://") href = "https://"+href;
+
+                 // where the match occured
+                 where = str.indexOf(url[0]);
+
+                 // add it to the output
+                 out += str.substr(0,where);
+
+                 // link it
+                 out += '<a href="'+href+'" target="_blank">'+url[0]+'</a>';
+
+                 // prepare str for next round
+                 str = str.substr((where+url[0].length));
+             } else {
+                 out += str;
+                 str = "";
+             }
+         } while(str.length>0);
+         return out;
+     },
+     div_text_to_linkify: function(div_id) {
+         var div_text = $('#'+div_id).html();
+	 div_text = common.linkify(div_text);
+	 //div_text = common.linkify_https(div_text);
+         $('#'+div_id).html(div_text);
+
+     }
+
+
+
+
+
+
+}
