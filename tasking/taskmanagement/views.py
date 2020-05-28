@@ -338,8 +338,8 @@ class ViewTask(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(ViewTask, self).get_context_data(**kwargs)
         task_id = self.kwargs['pk']
-        task = models.TaskComment.objects.get(id=int(task_id))
-        task_comments = models.TaskComment.objects.filter(task_id=task.id)
+        task = models.Task.objects.get(id=int(task_id))
+        task_comments = models.TaskComment.objects.filter(task=task)
         context['current_datetime'] = datetime.datetime.now()
         context['task_comments'] = []
         for tc in task_comments:
