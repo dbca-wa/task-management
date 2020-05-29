@@ -449,6 +449,10 @@ ALLOWED_UPLOAD_TYPES = [
     'text/plain'
 ]
 
+# allow upload big file
+DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024 * 45  # 15M
+FILE_UPLOAD_MAX_MEMORY_SIZE = DATA_UPLOAD_MAX_MEMORY_SIZE
+
 #USER_FIELDS = ['email']
 ##SOCIAL_AUTH_STRATEGY = 'social_django.strategy.DjangoStrategy'
 ##SOCIAL_AUTH_STORAGE = 'social_django.models.DjangoStorage'

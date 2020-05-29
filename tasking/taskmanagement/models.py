@@ -4,14 +4,15 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
 from django.urls import reverse
-#from django.utils.encoding import python_2_unicode_compatible
 from model_utils import Choices
 from django.contrib.auth.models import Group
 from django.core.files.storage import FileSystemStorage
 from django.core.exceptions import ValidationError
-#from ledger.accounts.models import Organisation, Address as LedgerAddress, OrganisationAddress
-#from ledger.accounts.models import EmailUser
+from datetime import datetime
 
+today = datetime.now()
+today_path = today.strftime("%Y/%m/%d/%H")
+private_storage = FileSystemStorage(location=settings.BASE_DIR+"/private-media/task_attachments/"+today_path)
 
 ASSIGNMENT_GROUP = (
    (0, 'taskgroup'),
@@ -62,6 +63,19 @@ class Task(models.Model):
     def __str__(self):
         return '{}'.format(self.task_title)
 
+class TaskAttachment(models.Model):
+    task = models.ForeignKey(Task, blank=False, null=False, on_delete=models.CASCADE)
+    filename = models.CharField(max_length=256, default='')
+    extension = models.CharField(max_length=50, default='')
+    upload = models.FileField(storage=private_storage, default=None, null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+    def __str__(self):
+        if self.upload:
+            return '{}'.format(self.upload.path)
+        else:
+            return ''
+
 class TaskComment(models.Model):
     task = models.ForeignKey(Task, blank=False, null=False, on_delete=models.CASCADE)
     task_comment = models.TextField(blank=True, null=True, default="")
@@ -71,6 +85,19 @@ class TaskComment(models.Model):
     def __str__(self):
         return '{}'.format(self.task_comment)
 
+class TaskCommentAttachment(models.Model):
+    task = models.ForeignKey(Task, blank=False, null=False, on_delete=models.CASCADE)
+    task_comment = models.ForeignKey(TaskComment, blank=False, null=False, on_delete=models.CASCADE)
+    filename = models.CharField(max_length=256, default='')
+    extension = models.CharField(max_length=50, default='')
+    upload = models.FileField(storage=private_storage, default=None, null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+    def __str__(self):
+        if self.upload:
+            return '{}'.format(self.upload.path)
+        else:
+            return ''
 
 class GroupCounter(models.Model):
     group_type = models.IntegerField(blank=True, null=True) 

@@ -281,6 +281,12 @@ def task_esculation_multiselect(task_id):
          item_array.append(item)
     return item_array
 
+def get_extension_from_filename(filename):
+    if filename[-4:-3] == '.':
+       return filename[-3:]
+    if filename[-5:-4] == '.':
+       return filename[-4:]
+
 
 
 ##@python_2_unicode_compatible

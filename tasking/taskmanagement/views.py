@@ -353,6 +353,17 @@ class ViewTask(LoginRequiredMixin, DetailView):
             else:
                row['created_by_name'] = "Unknown"
             row['created'] = tc.created
+            row['comment_attachments'] = []
+            comment_attachments =  models.TaskCommentAttachment.objects.filter(task_comment=tc)
+            for ca in comment_attachments:
+                ca_row = {}
+                ca_row['id'] = ca.id
+                ca_row['upload'] = ca.upload.path
+                ca_row['filename'] = ca.filename
+                ca_row['extension'] = ca.extension
+                row['comment_attachments'].append(ca_row)
+
+
             context['task_comments'].append(row) 
         #context['']
 #        context['request'] = self.request

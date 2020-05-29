@@ -68,7 +68,7 @@
                              </div>
 		        </div>
 		     </div>
-                     </div>
+                  </div>
                 </div>
                 <div class="p-1" style='margin-left: 10px; background-color: #f1f1f1;'>
                      <div class="bg-white p-1">
@@ -333,41 +333,17 @@
                                                                {{ tc.comment|linebreaksbr }}
                                                          </div>
                                                          <div class="task_comment_attachment_box">
-                                                                 <span class='t_attachment'>
-                                                                      <span class='task_comment_attachment_container'>
-                                                                           <i class='task_comment_attachment_icon'>&nbsp;</i>
+								 {% for ca in tc.comment_attachments %}
+                                                                      <span class='t_attachment'>
+                                                                           <span class='task_comment_attachment_container'>
+                                                                                <i class='task_comment_attachment_icon'>&nbsp;</i>
+                                                                           </span>
+                                                                           <span class='task_comment_attachment_name' style='padding-bottom:5px;'>
+										   <a href='/private-media/view/{{ ca.id }}-file.{{ ca.extension }}' target='_view_file_{{ ca.id }}'>{{ ca.filename }}</a>
+                                                                           </span>
                                                                       </span>
-                                                                      <span class='task_comment_attachment_name' style='padding-bottom:5px;'>
-                                                                           <a href=''>Filename 5</a>
-                                                                      </span>
-                                                                 </span>
 
-                                                                 <span class='t_attachment'>
-                                                                      <span class='task_comment_attachment_container'>
-                                                                           <i class='task_comment_attachment_icon'>&nbsp;</i>
-                                                                      </span>
-                                                                      <span class='task_comment_attachment_name' style='padding-bottom:5px;'>
-                                                                           <a href=''>Filename 2</a>
-                                                                      </span>
-                                                                 </span>
-
-                                                                 <span class='t_attachment'>
-                                                                      <span class='task_comment_attachment_container'>
-                                                                           <i class='task_comment_attachment_icon'>&nbsp;</i>
-                                                                      </span>
-                                                                      <span class='task_comment_attachment_name' style='padding-bottom:5px;'>
-                                                                           <a href=''>Filename 2</a>
-                                                                      </span>
-                                                                 </span>
-
-                                                                 <span class='t_attachment'>
-                                                                      <span class='task_comment_attachment_container'>
-                                                                           <i class='task_comment_attachment_icon'>&nbsp;</i>
-                                                                      </span>
-                                                                      <span class='task_comment_attachment_name' style='padding-bottom:5px;'>
-                                                                           <a href=''>Filename 2</a>
-                                                                      </span>
-                                                                 </span>
+								 {% endfor %}
                                                          </div>
 
 
@@ -405,6 +381,25 @@
 							<input type='hidden' value='{{ object.id }}' name='task_id' id='task_id'>
 							<textarea rows=10 class='textarea form-control' id='task_comment'></textarea>
                                                    </div>
+						   <div class="col-md-12 m-0 p-0 mt-1" >
+                                                          <div>
+                                                              <div>
+                                                                  <input type="file" id="filePicker" multiple style='display:none' >
+								  <input class='btn btn-primary' type="button" value="Select Files" onclick="document.getElementById('filePicker').click();" />
+
+                                                              </div>
+                                                              <br>
+							      <div id='attached_files'>
+							      </div>
+                                                          </div>	
+					           </div>
+                                                	<script>
+                                                		if (window.File && window.FileReader && window.FileList && window.Blob) {
+                                                			    document.getElementById('filePicker').addEventListener('change', task_attachment.handleFileSelect, false);
+                                                		} else {
+                                                			    alert('The File APIs are not fully supported in this browser.');
+                                                		}
+                                                	</script>
 						   <div class=' col-md-12 text-right' style='padding-top:4px'>
                                                        <div class='row'>
                                                              <div class="col-md-8 m-0 p-0 mt-1" >
@@ -416,7 +411,6 @@
                                                                               <input value='{{ object.deferred_to|date:"d/m/Y H:i" }}' class='datetimeinput form-control' id='task_deferred_date'>
                                                                       </div>
 								      <div class="col-md-3" >
-									   <button class='btn btn-primary'>Add Attachment</button>
 								      </div>
                                                                    </div>
 								    

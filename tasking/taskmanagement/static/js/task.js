@@ -52,11 +52,19 @@ var task = {
 	    //        return false;
 	    //    }
             //}
+            var ta = [];
+            for (var i = 0; i < task_attachment.var.attachment_cache.length; i++) {
+	            var filename = task_attachment.var.attachment_cache[i].filename;
+		    var base64file = task_attachment.var.attachment_cache[i].reader.result;
+		    ta.push({'filename': filename, 'base64file': base64file })
 
+            }
+		
             var form_data =  { 'task_id': task_id,
 		               'task_status': status,
 		               'task_comment': task_comment,
-	                       'task_deferred_date' : task_deferred_date
+	                       'task_deferred_date' : task_deferred_date,
+		               'task_attachments' : JSON.stringify(ta) 
 	                     };
 
             console.log(form_data);

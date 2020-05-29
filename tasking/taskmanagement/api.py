@@ -7,6 +7,9 @@ from taskmanagement import models
 from ledger_api_client import models as ledger_api_models
 from ledger_api_client import common as ledger_api_common
 from taskmanagement import common
+from django.core.files.base import ContentFile
+from django.utils.crypto import get_random_string
+import base64
 import datetime
 #from ledger.accounts.models import EmailUser
 
@@ -82,24 +85,45 @@ def create_task_comment(request, *args, **kwargs):
         task_id = request.POST.get('task_id',None)
         task_status = request.POST.get('task_status',None)
         task_deferred_date = request.POST.get('task_deferred_date',None)
+        task_attachments = request.POST.get('task_attachments','[]')
+        ta_json = json.loads(task_attachments)
+        for ta in ta_json:
+            print (ta['filename'])
         ledger_info = common.loggedin_ledger_userinfo(request)
         task = models.Task.objects.get(id=int(task_id))
-        models.TaskComment.objects.create(task=task,task_comment=task_comment, created_by=(ledger_info['ledger_id']))
+        task_comment = models.TaskComment.objects.create(task=task,task_comment=task_comment, created_by=(ledger_info['ledger_id']))
+
         print ("STATUS")
         print (task_deferred_date)
+
         if task_status == 'close':
             task.status = 0
         if task_status == 'defer':
             task.status = 1
-
+ 
         task_deferred_date_cov =  datetime.datetime.strptime(str(task_deferred_date), '%d/%m/%Y %H:%M')
         task.deferred_to = task_deferred_date_cov
         task.save()
+        #print (task_attachments)       
+        print (task_comment.id)
+        for ta in ta_json:
+            print (ta['filename'])
+            randomfile_name = get_random_string(length=5, allowed_chars=u'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
+            b64data = ta['base64file'].split(",")
+            cfile = ContentFile(base64.b64decode(b64data[1]), name=randomfile_name+'-'+ta['filename'])
+            models.TaskCommentAttachment.objects.create(task=task,filename=ta['filename'],task_comment=task_comment,upload=cfile, extension=common.get_extension_from_filename(ta['filename'].lower()))
+
         data_list['status'] = 200
         data_list['response_data']['message'] = "Successfully Created"
-    except:
+        #data_list['post'] = str(request.POST)
+        #data_list['get'] = str(request.GET)
+
+    except Exception as e:
         data_list['status'] = 500
         data_list['response_data']['message'] = "Error Submitting data to Server."
+        data_list['message'] = str(e)
+        #data_list['post'] = str(request.POST)
+        #data_list['get'] = str(request.GET)
     return HttpResponse(json.dumps(data_list), content_type='application/json', status=data_list['status'])
 
 

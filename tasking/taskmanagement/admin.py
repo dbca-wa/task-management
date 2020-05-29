@@ -54,6 +54,10 @@ class TaskEscalationAdmin(admin.ModelAdmin):
     search_fields = ('task',)
     inlines = [TaskEscalationAssignmentAdminInline]
 
+@admin.register(models.TaskCommentAttachment)
+class TaskCommentAttachment(admin.ModelAdmin):
+    list_display = ('id','task','filename','upload','extension','created')
+    search_fields = ('task',)
 
 
 
