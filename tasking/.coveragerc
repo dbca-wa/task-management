@@ -1,0 +1,11 @@
+[report]
+omit =
+    */migrations/*
+    */test_*
+    */management/commands/*
+    */__init__.py
+    */urls.py
+    */apps.py
+    statdev/wsgi.py
+    statdev/settings.py
+    manage.py

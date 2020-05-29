@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block page_content_inner %}
+
+{% if request.user.is_authenticated %}
+
+{% include "body/task_groups.html" %}
+
+<div class="col-sm-12">
+<h1>My Assigned Tasks</h1>
+{% include "body/my_task_table.html" %}
+
+</div>
+{% include "body/task_pagination.html"  %}
+{% else %}
+Authentication Error
+{% endif %}
+
+{% endblock %}
+
