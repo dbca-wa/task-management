@@ -1,0 +1,229 @@
+{% extends "webtemplate_dbca/base_internet.html" %}
+{% load static from static %}
+{% block base_style %}
+
+{% endblock %}
+
+{% block extra_head %}
+
+        
+        <link rel="stylesheet" type="text/css" href="/static/common/node_modules/bootstrap/dist/css/bootstrap.css">
+        <link rel="stylesheet" type="text/css" href="/static/common/node_modules/datatables.net-bs/css/dataTables.bootstrap.css">
+        <link rel="stylesheet" type="text/css" href="/static/common/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/applications.css" />
+        <link rel="stylesheet" type="text/css" href="/static/css/bootstrap-datetimepicker.css" />
+        <link rel="stylesheet" type="text/css" href="/static/css/multi-select-jm.css" />
+
+
+        <!-- npm modules -->
+        <script type="text/javascript" src="/static/common/node_modules/jquery/dist/jquery.js"></script>
+        <script type="text/javascript" src="/static/common/node_modules/datatables/media/js/jquery.dataTables.js"></script>
+        <script type="text/javascript" src="/static/common/node_modules/datatables.net-bs/js/dataTables.bootstrap.js"></script>
+	<script type="text/javascript" src="/static/common/node_modules/popper.js/dist/umd/popper.min.js"></script>
+        <script type="text/javascript" src="/static/common/node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+        <script type="text/javascript" src="/static/common/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+        <!-- npm modules -->
+
+        <!-- static js-->
+        <script  type="text/javascript" src="/static/js/natural.js"></script>
+        <script  type="text/javascript" src="/static/js/date-dd-MMM-yyyy.js"></script>
+	<script  type="text/javascript" src="/static/js/unsaved_form.js"></script>
+        <script  type="text/javascript" src="/static/js/ajax_jquery_uploader.js"></script>
+ 	<script  type="text/javascript" src="/static/js/django_ajax_form.js"></script>
+        <script  type="text/javascript" src="/static/js/common.js"></script>
+        <script  type="text/javascript" src="/static/js/raphael.min.js"></script>
+        <script  type="text/javascript" src="/static/js/flowchart.js"></script>
+        <script  type="text/javascript" src="/static/js/bootstrap-datetimepicker.js"></script>
+        <script  type="text/javascript" src="/static/js/multi-select-jm.js"></script>
+        <script  type="text/javascript" src="/static/js/input-friendly-select-jm.js"></script>
+	<script  type="text/javascript" src="/static/js/task.js"></script>
+	<script  type="text/javascript" src="/static/js/task_response_notification.js"></script>
+	<script  type="text/javascript" src="/static/js/task_attachment.js"></script>
+
+        <!-- static js-->
+
+
+{% endblock %}
+
+{% block base_js %}{% endblock %}
+
+{% block masthead %}
+<div class="container-fluid">
+    <div class="row mastheadi" style='background-color: #000;'>
+        <div class="col-8">
+            <img class="pull-left hidden-xs" src="{% static 'images/dbca_white.png' %}" height='80'>
+        </div>
+	<div class="col-4 text-right">
+            <img src="https://outlook.office365.com/owa/service.svc/s/GetPersonaPhoto?email=andrew.kemp@dbca.wa.gov.au&UA=0&size=HR96x96&sc=1586251795501" alt="..." class="border border-light rounded-circle mt-2" height="60">
+	</div>
+    </div>
+</div>
+{% endblock masthead %}
+
+
+{% block top_navbar %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/"><img src="{% static 'images/house_icon.png' %}" height='22px;' class="d-inline-block align-middle" alt=""></a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+
+    {% if staff == True %}
+		<li class="nav-item active"><a class="nav-link" href="{% url 'new_task' %}" title="New Task"><img src="{% static 'images/dot_small.png' %}" class="d-inline-block align-middle" alt=""> New Task</a></li>
+
+		<li class="nav-item "><a class="nav-link" href="{% url 'my_task_assignments' %}" title="My Task Assignments"><img src="{% static 'images/dot_small.png' %}" class="d-inline-block align-middle" alt=""> My Task Assignments</a></li>
+
+		<li class="nav-item "><a class="nav-link" href="{% url 'my_assigned_tasks' %}" title="My Assigned Tasks"><img src="{% static 'images/dot_small.png' %}" class="d-inline-block align-middle" alt=""> My Assigned Tasks</a></li>
+                <li class="nav-item "><a class="nav-link" href="" title="Task Groups"><img src="{% static 'images/dot_small.png' %}" class="d-inline-block align-middle" alt=""> Task Esculations</a></li>
+
+    {% else %}
+                <li class="nav-item "><a class="nav-link" href="" title="Contact Us"><img src="{% static 'images/dot_small.png' %}" class="d-inline-block align-middle" alt=""> Contact Us</a></li>
+                <li class="nav-item "><a class="nav-link" href="" title="Further Information"><img src="{% static 'images/dot_small.png' %}" class="d-inline-block align-middle" alt=""> Further Information</a></li>
+    {% endif %}
+
+
+
+  </div>
+ 
+</nav>
+{% endblock top_navbar %}
+
+
+{% block navbar_site_title %}
+
+{% endblock navbar_site_title %}
+
+{% block navbar_links %}
+{% if staff == True %}
+    <li class='hidden-lg hidden-md'><a href="" title="My Tasks">My Tasks</a></li>
+    <li class='hidden-lg hidden-md'><a href="" title="Task Groups">Task Groups</a></li>
+{% else %}
+    <li class='hidden-lg hidden-md' ><a href="" title="Contact Us">Contact Us</a></li>
+    <li class='hidden-lg hidden-md' ><a href="" title="Further Information">Further Information</a></li>
+{% endif %}
+
+{% block navbar_auth %}
+{% if request.user.is_authenticated %}
+<li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{% firstof user.get_full_name user.email %} <span class="caret"></span></a>
+    <ul class="dropdown-menu" role="menu">
+        <li><a href="">My personal details</a></li>
+        {% if staff == False %}
+        <li><a href="" title="My Companies">My Companies</a></li>
+        {% endif %}
+        {% if user.is_superuser %}
+        <li><a href="{% url 'admin:index' %}" title="Administration">Administration</a></li>
+        {% endif %}
+        <li><a href="{% url 'logout' %}" title="Log out">Log out</a></li>
+    </ul>
+</li>
+{% endif %}
+{% endblock navbar_auth %}
+{% endblock navbar_links %}
+
+{% block page_content %}
+<!-- Messages  -->
+{% if messages %}
+<div class="row" style='padding: 12px;'>
+    <div class="col-xs-12 col-md-12 col-lg-12">
+        {% for message in messages %}
+	{% if message.tags == 'error' %}
+		<div class="alert alert-danger">
+			{{ message|safe }}
+		</div>
+	{% else %}
+        <div class="alert{% if message.tags %} alert-{{ message.tags }}{% endif %}">
+            {{ message|safe }}
+        </div>
+	{% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<div class="row">
+    <div class="col-xs-12 col-md-12 col-lg-12">
+        {% block page_content_inner %}{% endblock %}
+    </div>
+</div>
+{% endblock page_content %}
+
+{% block page_footer %}
+<div id="footer">
+    <div class="container-fluid">
+        <hr>
+        <div class="row">
+            <div class="col-xs-9 text-muted">
+                <small>v{{ project_version }}, Commit: {{ project_last_commit_date }} &copy; Department of Parks and Wildlife</small>
+            </div>
+            <div class="col-xs-3 text-muted text-right">
+                {% if object.routeid %}
+                <small> Form Step: {{ object.routeid }} </small>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+.overtop-modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1050;
+    display: none;
+    /* overflow: hidden; */
+    -webkit-overflow-scrolling: touch;
+    outline: 0;
+}
+</style>
+<div class='overtop-modal' id='overtop' style='background-color: rgba(39, 39, 39, 0.5);'>
+sadf
+<div>
+sdaf dsaf 
+</div>
+
+
+
+</div>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Unsaved Form Data</h4>
+      </div>
+      <div class="modal-body">
+        <p>Your form has data that has not yet been saved.  Click "Don't Save" to continue without saving or no to cancel and return to your form.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="django_form_checks.loadUrl();">Dont Save</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+    $(function() {
+        // Initialise datepicker widgets.
+        $(".dateinput").datepicker({
+            format: 'dd/mm/yyyy',
+            autoclose: true,
+            todayHighlight: true
+        });
+    });
+</script>
+
+
+{% endblock extra_js %}
+

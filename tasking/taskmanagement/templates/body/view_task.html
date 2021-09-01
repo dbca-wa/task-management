@@ -1,0 +1,452 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block page_content_inner %}
+
+<!-- Modal -->
+<div class="modal fade" id="NoCommentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Empty Comment</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          You have not entered a comment, please confirm this was intended. 
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+        <button type="button" class="btn btn-success" data-dismiss="modal" onclick="task.no_comment_confirm();">Yes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="row">
+	<div class="col-sm-0 col-md-0 col-lg-0 col-xl-2">
+                    &nbsp;
+        </div>
+	<div class="col-sm-12 col-md-12 col-lg-12 col-xl-8">
+
+<div class="panel panel-default" style="width: 100% ">
+    <div class="panel-body">
+        <div class="row">
+           <div class="col-sm-12 col-md-12 col-lg-12">
+	   </div>
+	</div>
+        <br>
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-12">
+                <div class="col-sm-12 col-md-12 col-lg-12" style='margin-left: 10px;'>
+                     <div class="row">
+                     <div class="col-xs-8 col-sm-9 col-lg-6" style='padding-left: 10px;' >
+			     <h1>{{ object.task_title }} </h1>
+                     </div>
+                     <div class="col-xs-4 col-sm-3 col-lg-6 text-right">
+                        <div class='d-none d-md-block'>
+			     <a class="mb-1 mr-1 btn btn-primary btn-sm" href="{% url "edit_task" object.id %}" role="button">Change Log</a>
+	                     <a class="mb-1 mr-1 btn btn-primary btn-sm" href="{% url "edit_task" object.id %}" role="button">Edit Task</a>
+                             <a class="mb-1 mr-1 btn btn-primary btn-sm" href="{% url "assign_task" object.id %}" role="button">Assign Task</a>
+			</div>
+                        <div class='d-sm-block d-md-none'>
+                            <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
+                             <div class="btn-group btn-group-right " role="group">
+                                   <button id="btnGroupVerticalDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                      <img src='/static/images/settings_icon.png'>
+                                   </button>
+                                   <div class="dropdown-menu dropdown-menu-right" aria-labelledby="btnGroupVerticalDrop1" x-placement="bottom-start" iistyle="position: absolute; transform: translate3d(0px, 38px, 0px); top: 0px; left: 0px; will-change: transform;">
+
+                                            <a class="dropdown-item" href="{% url "edit_task" object.id %}" >Change Log</a>
+                                            <a class="dropdown-item" href="{% url "edit_task" object.id %}" >Edit Task</a>
+                                            <a class="dropdown-item" href="{% url "assign_task" object.id %}" >Assign Task</a>
+                                   </div>
+                                 </div>
+                             </div>
+		        </div>
+		     </div>
+                  </div>
+                </div>
+                <div class="p-1" style='margin-left: 10px; background-color: #f1f1f1;'>
+                     <div class="bg-white p-1">
+			   
+                           <div class="col-lg-12 " style=''>
+				 <div class="col-sm-12 col-md-12 col-lg-12" style='padding-bottom: 10px;'>
+			              <div class='row'>
+					     <div class="col-md-12 view_task_header" >
+						     <span style='position: absolute; width: 100%;' class='text-right' >
+							      <span style='position: relative; width: 100%; padding-right: 30px;' class='text-right' >
+								      {% if object.status == 1 %}
+									    {% if object.deferred_to|date:"YmdHis" > current_datetime|date:"YmdHis" %}
+									         <span class="badge badge-info" style='padding: 8px;'>DEFERRED</span>
+									    {% else %}
+  								                 <span class="badge badge-success" style='padding: 8px;'>OPEN</span>
+									    {% endif %}
+							              {% else %}
+								            <span class="badge badge-danger" style='padding: 8px;'>CLOSED</span>
+								      {% endif %} 
+							      </span>
+						     </span>
+						     <h5>Task Details<h5>
+
+				             </div>
+				      </div>
+				 </div>
+                                 <div style='padding: 10px;'>
+
+
+                                 <div class="col-sm-12 col-md-12 col-lg-12" >
+                                        <div class='row'>
+                                            <div class="col-md-2">
+                                              <label>Task Priority</label>
+                                            </div>
+                                            <div class="col-md-10">
+ 						   {% if object.task_priority == 1 %} 
+                                                      <span class="badge badge-info" style='padding: 8px;'>LOW</span>
+						   {% endif %}
+                                                   {% if object.task_priority == 2 %}
+                                                      <span class="badge badge-primary" style='padding: 8px;'>MEDIUM</span>
+                                                   {% endif %}
+                                                   {% if object.task_priority == 3 %}
+                                                      <span class="badge badge-warning" style='padding: 8px;'>HIGH</span>
+                                                   {% endif %}
+                                                   {% if object.task_priority == 4 %}
+                                                      <span class="badge badge-danger" style='padding: 8px;'>CRITICAL</span>
+                                                   {% endif %}
+
+						   
+
+                                            </div>
+                                        </div>
+                                 </div>
+
+
+                                 <div class="col-sm-12 col-md-12 col-lg-12" >
+                                        <div class='row'>
+                                            <div class="col-md-2">
+                                              <label>Task ID</label>
+                                            </div>
+                                            <div class="col-md-10">
+                                                   TA-{{ object.id }}
+                                            </div>
+                                        </div>
+                                 </div>
+
+
+
+                                 <div class="col-sm-12 col-md-12 col-lg-12" >
+                                        <div class='row'>
+                                            <div class="col-md-2">
+                                              <label>Task Owner</label>
+                                            </div>
+                                            <div class="col-md-10">
+                                                   Jason Moore
+                                            </div>
+                                        </div>
+                                 </div>
+                                 <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <div class='row'>
+                                            <div class="col-lg-2">
+                                              <label>Task Assignments</label>
+                                            </div>
+                                            <div class="col-lg-10">
+                                                  Jason Moore
+                                            </div>
+                                        </div>
+                                 </div>
+                                 <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <div class='row'>
+                                            <div class="col-lg-2">
+                                              <label>Task Esculations</label>
+                                            </div>
+                                            <div class="col-lg-10">
+                                                Jason Moore
+                                            </div>
+                                        </div>
+                                 </div>
+                                 <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <div class='row'>
+                                            <div class="col-lg-2">
+                                              <label>Task Assigned To</label>
+                                            </div>
+                                            <div class="col-lg-10">
+                                                  {{ object.assigned_to_info }}
+                                            </div>
+                                        </div>
+                                 </div>
+           
+                                 <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <div class='row'>
+                                            <div class="col-lg-2">
+                                              <label>Task Created</label>
+                                            </div>
+                                            <div class="col-lg-10">
+                                                  {{ object.created }}                                 
+                                            </div>
+                                        </div>
+                                 </div>
+           
+                                 <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <div class='row'>
+                                            <div class="col-lg-2">
+                                              <label>Task Deferred To</label>
+                                            </div>
+                                            <div class="col-lg-10">
+                                                  {{ object.deferred_to }}
+                                            </div>
+                                        </div>
+                                 </div>
+           
+                                 <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <div class='row'>
+                                            <div class="col-lg-2">
+                                              <label>Task Type</label>
+                                            </div>
+                                            <div class="col-lg-10">
+                                                 {{ object.get_task_type_display }}
+                                            </div>
+                                        </div>
+                                 </div>
+                                 {% if object.task_type == 1 %}
+                                 <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <div class='row'>
+                                            <div class="col-lg-2">
+                                                 <label>SRN</label>
+                                            </div>
+                                            <div class="col-lg-10">
+                                                 {{ object.system_reference_number }}
+                                            </div>
+                                        </div>
+                                 </div>
+				 {% endif %}
+			      </div>
+                           </div>
+			</div>
+			
+                        <div class="bg-white p-1 mt-1">
+				<div class="col-sm-12 col-md-12 col-lg-12"> 
+
+                                      <div class='row'>
+					      <div class="col-md-12" style='padding-bottom: 10px;'>
+				                 <div class='view_task_header'>
+                                                      <h5>Task Description</h5>
+				                 </div>
+                                             </div>
+                                      </div>
+
+
+
+                                 <div class='row'>
+                                            <div class="col-lg-12">
+						     <div style='padding: 5px 25px 15px 25px;' id='task_description'>
+	                                                 {{ object.task_description|linebreaksbr }}
+					             </div>
+                                            </div>
+                                 </div>
+                           </div>
+                       </div>
+
+
+                       <div class="p-1 mt-1" style='background-color: #fff'>
+
+
+                           <div class="col-sm-12 col-md-12 col-lg-12"  style=''>
+
+                                      <div class='row'>
+                                             <div class="col-md-12" style='padding-bottom: 10px;'>
+						   <div class='view_task_header'>
+                                                      <h5>Task Comments</h5>
+						   </div>
+                                             </div>
+                                      </div>
+
+	<script>
+		common.div_text_to_linkify('task_description');
+	</script>
+<style>
+
+.view_task_header {
+  background-color: #2f2f2f;
+  color: #FFFFFF;
+  padding: 10px 7px 7px 17px; 
+  border-radius: 5px;
+
+}
+
+.task_comments {
+   padding: 15px 25px 15px 25px; 
+   background-color: #fffcd8; 
+   border-radius: 10px; 
+   margin-bottom: 10px;
+}
+
+
+.task_comment_attachment_container {
+    height: 18px;
+    width: 18px;
+    display: inline-block;
+    position: relative;
+}
+.task_comment_attachment_icon {
+    background-image: url("/static/images/red_attachment_icon.png");
+    content: " ";
+    background-repeat: no-repeat;
+    margin-top: 3px;
+    position: absolute;
+    height: 18px;
+    width: 18px;
+
+}
+.task_comment_attachment_name a {
+    color: #696969; 
+    font-weight: bold;
+    text-decoration: none;
+    font-family: Arial Narrow, sans-serif; 
+}
+
+.task_comment_attachment_name a:hover {
+    color: #b10000;
+
+}
+
+.task_comment_attachment_box {
+     width: 100%;
+     padding-top: 10px;
+}
+.task_comment_params_container {
+     color: #ef5959;
+     font-size: 12px;
+     font-style: italic;
+}
+							 
+</style>
+
+
+                                 <div class='row'>
+                                            {% for tc in task_comments %}
+                                            <div class="col-lg-12">
+                                                 <div class='task_comments' >
+                                                         <div class='task_comment_text' id='task_comment_text_{{ tc.id }}' >
+                                                               {{ tc.comment|linebreaksbr }}
+                                                         </div>
+                                                         <div class="task_comment_attachment_box">
+								 {% for ca in tc.comment_attachments %}
+                                                                      <span class='t_attachment'>
+                                                                           <span class='task_comment_attachment_container'>
+                                                                                <i class='task_comment_attachment_icon'>&nbsp;</i>
+                                                                           </span>
+                                                                           <span class='task_comment_attachment_name' style='padding-bottom:5px;'>
+										   <a href='/private-media/view/{{ ca.id }}-file.{{ ca.extension }}' target='_view_file_{{ ca.id }}'>{{ ca.filename }}</a>
+                                                                           </span>
+                                                                      </span>
+
+								 {% endfor %}
+                                                         </div>
+
+
+                                                         <div class="task_comment_params_box">
+                                                             <div class='text-right task_comment_params_container' >
+								     <span><label>Created by</label> {{ tc.created_by_name }}</span>  <span><label>on </label> {{ tc.created }}</label>
+                                                             </div>
+                                                         </div>
+
+
+                                                  </div>
+                                            </div>
+                                            <script>
+                                                    common.div_text_to_linkify('task_comment_text_{{ tc.id }}');
+                                            </script>
+
+                                            {% endfor %}
+
+
+
+                                  </div>
+                           </div>
+                       </div>
+	               <div class="p-1 mt-1" style='background-color: #fff'>
+                           <div class="col-sm-12 col-md-12 col-lg-12"  style=''>
+
+                                      <div class='row'>
+                                             <div class="col-md-12" style='padding-bottom: 10px;'>
+                                                   <div class='view_task_header'>
+                                                      <h5>New Comment</h5>
+                                                   </div>
+                                             </div>
+                                             <div class="col-md-12" style='padding-bottom: 10px;'>
+                                                   <div class="col-md-12 m-0 p-0 mt-1" >
+							<input type='hidden' value='{{ object.id }}' name='task_id' id='task_id'>
+							<textarea rows=10 class='textarea form-control' id='task_comment'></textarea>
+                                                   </div>
+						   <div class="col-md-12 m-0 p-0 mt-1" >
+                                                          <div>
+                                                              <div>
+                                                                  <input type="file" id="filePicker" multiple style='display:none' >
+								  <input class='btn btn-primary' type="button" value="Select Files" onclick="document.getElementById('filePicker').click();" />
+
+                                                              </div>
+                                                              <br>
+							      <div id='attached_files'>
+							      </div>
+                                                          </div>	
+					           </div>
+                                                	<script>
+                                                		if (window.File && window.FileReader && window.FileList && window.Blob) {
+                                                			    document.getElementById('filePicker').addEventListener('change', task_attachment.handleFileSelect, false);
+                                                		} else {
+                                                			    alert('The File APIs are not fully supported in this browser.');
+                                                		}
+                                                	</script>
+						   <div class=' col-md-12 text-right' style='padding-top:4px'>
+                                                       <div class='row'>
+                                                             <div class="col-md-8 m-0 p-0 mt-1" >
+                                                                  <div class='row'>
+                                                                      <div class="col-md-2 text-left" >
+        								      <label class='control-label' style='font-weight:bold'> Deferred To:</label>
+                                                                      </div>
+                                                                      <div class="col-md-7" >
+                                                                              <input value='{{ object.deferred_to|date:"d/m/Y H:i" }}' class='datetimeinput form-control' id='task_deferred_date'>
+                                                                      </div>
+								      <div class="col-md-3" >
+								      </div>
+                                                                   </div>
+								    
+                                                             </div>
+                                                             <div class="col-md-4 m-0 p-0 mt-1">
+								 <button class='btn btn-danger' onclick="task.close_task();">Close Task</button>
+	                                                         <button class='btn btn-success' onclick="task.defer_task();">Defer/Open Task</button>
+                                                             </div>
+                                                       </div>
+						   </div>
+                                             </div>
+                                      </div>
+			   </div>
+                       </div>
+           	  </div>
+                </div>
+	      </div>
+
+            </div>
+		<script>$('.datetimeinput').datetimepicker({format: 'dd/mm/yyyy hh:ii'});</script>
+        </div>
+              </div>
+              <div class="col-sm-0 col-md-0 col-lg-0 col-xl-2">
+                  &nbsp;
+              </div>
+        </div>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,11 @@
+{% if request.user.is_authenticated %}
+<br>
+<div class="col-sm-12">
+   <h7>Groups</h7>
+   <div class="p-2" style='background-color: #ececec;'>
+	   {% for tg in task_groups %}
+	   <a class="mb-1 mr-1 btn btn-{% if tg.total > 100 %}danger{% elif tg.total > 3 %}warning{% else %}primary{% endif %} btn-sm" href='{% url "group_tasks" tg.group_type_id tg.group_id %}' role="button">{{ tg.group_name }} <span class="badge badge-light badge-pill">{{ tg.total }}</span> </a>
+	   {% endfor %}
+   </div>
+</div>
+{% endif %}
