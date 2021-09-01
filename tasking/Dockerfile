@@ -30,6 +30,7 @@ RUN touch /app/.env
 COPY taskmanagement ./taskmanagement
 COPY cron /etc/cron.d/dockercron
 COPY startup.sh /
+RUN mkdir /app/private-media/
 RUN python manage.py collectstatic --noinput
 RUN service rsyslog start
 RUN chmod 0644 /etc/cron.d/dockercron
