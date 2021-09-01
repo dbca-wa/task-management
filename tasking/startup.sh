@@ -11,7 +11,8 @@ if [ $status -ne 0 ]; then
 fi
 
 # Start the second process
-gunicorn3 taskmanagement.wsgi --bind :8080 --config /app/gunicorn.ini
+#gunicorn3 taskmanagement.wsgi --bind :8080 --config /app/gunicorn.ini
+gunicorn3 taskmanagement.wsgi --bind :8080 --config /app/gunicorn.ini --access-logfile /var/log/gunicorn-access.log --error-logfile /var/log/gunicorn-error.log --log-level debug
 status=$?
 if [ $status -ne 0 ]; then
   echo "Failed to start cron: $status"
